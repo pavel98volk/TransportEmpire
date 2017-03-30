@@ -1,0 +1,5 @@
+﻿  exceptions.cxx
+c:\program files\visual studio\libraries\libodb\odb\exception.hxx(19): warning C4275: non dll-interface class 'std::exception' used as base for dll-interface struct 'odb::exception'
+  c:\program files (x86)\microsoft visual studio 14.0\vc\include\vcruntime_exception.h(43): note: see declaration of 'std::exception'
+  c:\program files\visual studio\libraries\libodb\odb\exception.hxx(19): note: see declaration of 'odb::exception'
+LINK : fatal error LNK1104: cannot open file 'odb-d.lib'

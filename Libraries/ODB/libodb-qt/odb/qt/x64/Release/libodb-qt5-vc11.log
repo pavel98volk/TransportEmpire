@@ -1,0 +1,10 @@
+﻿  exceptions.cxx
+C:\Program Files\Visual Studio\Libraries\libodb\odb/exception.hxx(19): warning C4275: non dll-interface class 'std::exception' used as base for dll-interface struct 'odb::exception'
+  C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\include\vcruntime_exception.h(43): note: see declaration of 'std::exception'
+  C:\Program Files\Visual Studio\Libraries\libodb\odb/exception.hxx(19): note: see declaration of 'odb::exception'
+     Creating library ..\..\lib64\odb-qt.lib and object ..\..\lib64\odb-qt.exp
+  Generating code
+  All 18 functions were compiled because no usable IPDB/IOBJ from previous compilation was found.
+  Finished generating code
+  libodb-qt5-vc11.vcxproj -> E:\Downloads\odb\libodb-qt-2.4.0\odb\qt\..\..\bin64\odb-qt5-2.4-vc11.dll
+  libodb-qt5-vc11.vcxproj -> ..\..\bin64\odb-qt5-2.4-vc11.pdb (Full PDB)

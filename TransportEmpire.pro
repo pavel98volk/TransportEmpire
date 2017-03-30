@@ -32,14 +32,30 @@ DEFINES += QT_DEPRECATED_WARNINGS
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 HEADERS += \
-    Model/bus.h \
-    Model/bus_type_info.h \
-    Model/city.h \
-    Model/money.h \
-    Model/path.h \
-    Model/race.h \
-    Model/race_statistics.h \
-    Model/route.h \
-    Model/route_statistics.h \
-    Model/scheduled_race.h \
+    Model/bus.h                 \
+    Model/bus_type_info.h       \
+    Model/city.h                \
+    Model/money.h               \
+    Model/path.h                \
+    Model/race.h                \
+    Model/race_statistics.h     \
+    Model/route.h               \
+    Model/route_statistics.h    \
+    Model/scheduled_race.h      \
     DAO/dao.h
+
+# Select the database we are going to use.
+#
+DEFINES += DATABASE_MSSQL
+
+# Set ODB headers paths
+#
+INCLUDEPATH += "./Libraries/ODB/libodb"
+INCLUDEPATH += "./Libraries/ODB/libodb-mssql"
+INCLUDEPATH += "./Libraries/ODB/libodb-qt"
+
+# Link to the ODB runtime libraries.
+#
+LIBS += -L"$$_PRO_FILE_PWD_/Libraries/ODB/libodb/lib64/"        -lodb
+LIBS += -L"$$_PRO_FILE_PWD_/Libraries/ODB/libodb-mssql/lib64/"  -lodb-mssql
+LIBS += -L"$$_PRO_FILE_PWD_/Libraries/ODB/libodb-qt/lib64/"     -lodb-qt

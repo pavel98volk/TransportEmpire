@@ -4,6 +4,7 @@
 
 #include <QVector>
 #include <QSharedPointer>
+#include <QDebug>
 
 class Path
 {
@@ -15,5 +16,9 @@ public:
 
 public:
     Path();
+    void ReadPath(const QJsonArray& jsonArray);
+    void print(){
+       for(auto &x: cities) x->print();
+     }
 };
 

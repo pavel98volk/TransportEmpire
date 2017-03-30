@@ -10,6 +10,8 @@
 #include "Model/race_statistics.h"
 #include "Model/route_statistics.h"
 
+#include "Server/webserver.h"
+
 
 int main(int argc, char *argv[])
 {
@@ -24,5 +26,12 @@ int main(int argc, char *argv[])
     RaceStatistics race_statistics;
     RouteStatistics route_statistics;
 
-    return a.exec();
+    WebServer *webServer = new WebServer;	// create web server instace
+        QObject::connect(webServer, &WebServer::closed,
+                         &a, &QCoreApplication::quit);
+        webServer->open(8080);
+
+    int result = a.exec();
+    delete webServer;
+    return result;
 }

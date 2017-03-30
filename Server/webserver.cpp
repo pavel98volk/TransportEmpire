@@ -1,6 +1,6 @@
 
 #include "Server/webserver.h"
-#include "Model/route.h"
+#include "Model/path.h"
 
 WebServer::WebServer(QObject *parent):
 	QObject(parent)
@@ -58,14 +58,14 @@ void WebServer::onClientTextMessage(QString message){
 
     if(message == "close()") close();
 
-    // qDebug() << message;
-    // Route r;
-    // QByteArray arr = QByteArray::fromStdString(message.toStdString());
-    // QJsonDocument doc(QJsonDocument::fromJson(arr));
-    // r.ReadPath(doc.array());
-    // r.print();
-    // for(QWebSocket *wsc: webClients)
-    //      wsc->sendTextMessage(message);
+     qDebug() << message;
+     Path p;
+     QByteArray arr = QByteArray::fromStdString(message.toStdString());
+     QJsonDocument doc(QJsonDocument::fromJson(arr));
+     p.ReadPath(doc.array());
+     p.print();
+     for(QWebSocket *wsc: webClients)
+          wsc->sendTextMessage(message);
 }
 
 void WebServer::onClientDataMessage(QByteArray message){

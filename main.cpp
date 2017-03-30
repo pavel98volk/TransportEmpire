@@ -1,14 +1,14 @@
 #include <QCoreApplication>
 
-#include "bus.h"
-#include "city.h"
-#include "path.h"
-#include "race.h"
-#include "route.h"
-#include "bus_type_info.h"
-#include "scheduled_race.h"
-#include "race_statistics.h"
-#include "route_statistics.h"
+#include "Model/bus.h"
+#include "Model/city.h"
+#include "Model/path.h"
+#include "Model/race.h"
+#include "Model/route.h"
+#include "Model/bus_type_info.h"
+#include "Model/scheduled_race.h"
+#include "Model/race_statistics.h"
+#include "Model/route_statistics.h"
 
 
 int main(int argc, char *argv[])

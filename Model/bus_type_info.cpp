@@ -1,4 +1,4 @@
-#include "bus_type_info.h"
+#include "Model/bus_type_info.h"
 
 
 BusTypeInfo::BusTypeInfo()

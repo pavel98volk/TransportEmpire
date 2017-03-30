@@ -10,15 +10,15 @@ CONFIG -= app_bundle
 TEMPLATE = app
 
 SOURCES += main.cpp \
-    city.cpp \
-    path.cpp \
-    route.cpp \
-    route_statistics.cpp \
-    race.cpp \
-    race_statistics.cpp \
-    bus_type_info.cpp \
-    bus.cpp \
-    scheduled_race.cpp
+    Model/bus.cpp \
+    Model/bus_type_info.cpp \
+    Model/city.cpp \
+    Model/path.cpp \
+    Model/race.cpp \
+    Model/race_statistics.cpp \
+    Model/route.cpp \
+    Model/route_statistics.cpp \
+    Model/scheduled_race.cpp
 
 # The following define makes your compiler emit warnings if you use
 # any feature of Qt which as been marked deprecated (the exact warnings
@@ -32,13 +32,14 @@ DEFINES += QT_DEPRECATED_WARNINGS
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 HEADERS += \
-    city.h \
-    path.h \
-    route.h \
-    route_statistics.h \
-    race.h \
-    race_statistics.h \
-    money.h \
-    bus_type_info.h \
-    bus.h \
-    scheduled_race.h
+    Model/bus.h \
+    Model/bus_type_info.h \
+    Model/city.h \
+    Model/money.h \
+    Model/path.h \
+    Model/race.h \
+    Model/race_statistics.h \
+    Model/route.h \
+    Model/route_statistics.h \
+    Model/scheduled_race.h \
+    DAO/dao.h

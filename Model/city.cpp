@@ -1,9 +1,26 @@
 #include "Model/city.h"
 
-City::City()
-{
-    population = 0;
 
+City::City(QString name_, quint32 population_, QPointF location_)
+{
+    name = name_;
+    population = population_;
+    location = location_;
+}
+
+QString City::getName()
+{
+    return name;
+}
+
+quint32 City::getPopulation()
+{
+    return population;
+}
+
+QPointF City::getLocation()
+{
+    return location;
 }
 
 void City::Read(const QJsonObject& json){
@@ -12,3 +29,4 @@ void City::Read(const QJsonObject& json){
         location.rx() = object["lat"].toDouble();
         location.ry() = object["lng"].toDouble();
  }
+

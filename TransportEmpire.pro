@@ -9,7 +9,7 @@ CONFIG -= app_bundle
 
 TEMPLATE = app
 
-SOURCES += main.cpp \
+SOURCES += \
     Model/bus.cpp \
     Model/bus_type_info.cpp \
     Model/city.cpp \
@@ -19,7 +19,10 @@ SOURCES += main.cpp \
     Model/route.cpp \
     Model/route_statistics.cpp \
     Model/scheduled_race.cpp \
-    Server/webserver.cpp
+    Server/webserver.cpp \
+    DAO/classes-odb.cxx \
+    DAO/dao.cpp \
+    main.cpp
 
 # The following define makes your compiler emit warnings if you use
 # any feature of Qt which as been marked deprecated (the exact warnings
@@ -44,7 +47,9 @@ HEADERS += \
     Model/route_statistics.h    \
     Model/scheduled_race.h      \
     DAO/dao.h \
-    Server/webserver.h
+    Server/webserver.h \
+    DAO/classes.hxx \
+    DAO/classes-odb.hxx
 
 # Select the database we are going to use.
 #
@@ -61,3 +66,6 @@ INCLUDEPATH += "./Libraries/ODB/libodb-qt"
 LIBS += -L"$$_PRO_FILE_PWD_/Libraries/ODB/libodb/lib64/"        -lodb
 LIBS += -L"$$_PRO_FILE_PWD_/Libraries/ODB/libodb-mssql/lib64/"  -lodb-mssql
 LIBS += -L"$$_PRO_FILE_PWD_/Libraries/ODB/libodb-qt/lib64/"     -lodb-qt
+
+DISTFILES += \
+    DAO/classes-odb.ixx

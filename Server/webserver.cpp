@@ -63,7 +63,7 @@ void WebServer::onClientTextMessage(QString message){
      QByteArray arr = QByteArray::fromStdString(message.toStdString());
      QJsonDocument doc(QJsonDocument::fromJson(arr));
      p.ReadPath(doc.array());
-     p.print();
+     p.Debug();
      for(QWebSocket *wsc: webClients)
           wsc->sendTextMessage(message);
 }

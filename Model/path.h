@@ -17,8 +17,8 @@ public:
 public:
     Path();
     void ReadPath(const QJsonArray& jsonArray);
-    void print(){
-       for(auto &x: cities) x->print();
+    void Debug(){
+       for(auto &x: cities) x->Debug();
      }
 };
 

@@ -47,7 +47,7 @@ IF OBJECT_ID('DBBusTypeInfo', 'U') IS NOT NULL
 GO
 
 CREATE TABLE [DBBusTypeInfo] (
-  [id] INT NOT NULL PRIMARY KEY,
+  [id] BIGINT NOT NULL PRIMARY KEY IDENTITY,
   [brand] VARCHAR(512) NULL,
   [model] VARCHAR(512) NULL,
   [fuel_consumption] INT NOT NULL,
@@ -55,7 +55,7 @@ CREATE TABLE [DBBusTypeInfo] (
 GO
 
 CREATE TABLE [DBBusState] (
-  [id] INT NOT NULL PRIMARY KEY,
+  [id] BIGINT NOT NULL PRIMARY KEY IDENTITY,
   [durability] INT NOT NULL,
   [last_technical_inspection_date] DATE NULL,
   [next_technical_inspection_date] DATE NULL,
@@ -63,9 +63,9 @@ CREATE TABLE [DBBusState] (
 GO
 
 CREATE TABLE [DBBus] (
-  [id] INT NOT NULL PRIMARY KEY,
-  [info] INT NOT NULL,
-  [state] INT NOT NULL,
+  [id] BIGINT NOT NULL PRIMARY KEY IDENTITY,
+  [info] BIGINT NOT NULL,
+  [state] BIGINT NOT NULL,
   [purchase_date] DATE NULL,
   CONSTRAINT [DBBus_info_fk]
     FOREIGN KEY ([info])
@@ -76,7 +76,7 @@ CREATE TABLE [DBBus] (
 GO
 
 CREATE TABLE [DBCity] (
-  [id] INT NOT NULL PRIMARY KEY,
+  [id] BIGINT NOT NULL PRIMARY KEY IDENTITY,
   [name] VARCHAR(512) NULL,
   [population] INT NOT NULL,
   [location_x] REAL NOT NULL,
@@ -84,15 +84,15 @@ CREATE TABLE [DBCity] (
 GO
 
 CREATE TABLE [DBPath] (
-  [id] INT NOT NULL PRIMARY KEY,
+  [id] BIGINT NOT NULL PRIMARY KEY IDENTITY,
   [quality_level] INT NOT NULL,
   [milage] FLOAT NOT NULL);
 GO
 
 CREATE TABLE [DBPath_cities] (
-  [object_id] INT NOT NULL,
+  [object_id] BIGINT NOT NULL,
   [index] INT NOT NULL,
-  [value] INT NULL,
+  [value] BIGINT NULL,
   CONSTRAINT [DBPath_cities_object_id_fk]
     FOREIGN KEY ([object_id])
     REFERENCES [DBPath] ([id])
@@ -111,23 +111,23 @@ CREATE INDEX [index_i]
 GO
 
 CREATE TABLE [DBRaceStatistics] (
-  [id] INT NOT NULL PRIMARY KEY,
+  [id] BIGINT NOT NULL PRIMARY KEY IDENTITY,
   [abs_popularity] INT NOT NULL,
   [derivative_popularity] INT NOT NULL,
   [trust_factor] REAL NOT NULL);
 GO
 
 CREATE TABLE [DBRouteStatistics] (
-  [id] INT NOT NULL PRIMARY KEY,
+  [id] BIGINT NOT NULL PRIMARY KEY IDENTITY,
   [quality_factor] REAL NOT NULL,
   [square_coverage] INT NOT NULL,
   [population_coverage] INT NOT NULL);
 GO
 
 CREATE TABLE [DBRoute] (
-  [id] INT NOT NULL PRIMARY KEY,
-  [path] INT NULL,
-  [statistics] INT NULL,
+  [id] BIGINT NOT NULL PRIMARY KEY IDENTITY,
+  [path] BIGINT NULL,
+  [statistics] BIGINT NULL,
   [milage] FLOAT NOT NULL,
   CONSTRAINT [DBRoute_path_fk]
     FOREIGN KEY ([path])
@@ -138,10 +138,10 @@ CREATE TABLE [DBRoute] (
 GO
 
 CREATE TABLE [DBRace] (
-  [id] INT NOT NULL PRIMARY KEY,
-  [route] INT NULL,
-  [bus_type_info] INT NULL,
-  [statistics] INT NULL,
+  [id] BIGINT NOT NULL PRIMARY KEY IDENTITY,
+  [route] BIGINT NULL,
+  [bus_type_info] BIGINT NULL,
+  [statistics] BIGINT NULL,
   [duration] TIME(3) NULL,
   [expenses_grivnas] INT NOT NULL,
   [expenses_coins] INT NOT NULL,
@@ -159,9 +159,9 @@ CREATE TABLE [DBRace] (
 GO
 
 CREATE TABLE [DBScheduledRace] (
-  [id] INT NOT NULL PRIMARY KEY,
-  [race] INT NULL,
-  [bus] INT NULL,
+  [id] BIGINT NOT NULL PRIMARY KEY IDENTITY,
+  [race] BIGINT NULL,
+  [bus] BIGINT NULL,
   [departure_time] TIME(3) NULL,
   [arrival_time] TIME(3) NULL,
   CONSTRAINT [DBScheduledRace_race_fk]

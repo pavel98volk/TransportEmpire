@@ -40,6 +40,26 @@ namespace odb
 
   access::object_traits_impl< ::DBBusTypeInfo, id_mssql >::id_type
   access::object_traits_impl< ::DBBusTypeInfo, id_mssql >::
+  id (const id_image_type& i)
+  {
+    mssql::database* db (0);
+    ODB_POTENTIALLY_UNUSED (db);
+
+    id_type id;
+    {
+      mssql::value_traits<
+          long unsigned int,
+          mssql::id_bigint >::set_value (
+        id,
+        i.id_value,
+        i.id_size_ind == SQL_NULL_DATA);
+    }
+
+    return id;
+  }
+
+  access::object_traits_impl< ::DBBusTypeInfo, id_mssql >::id_type
+  access::object_traits_impl< ::DBBusTypeInfo, id_mssql >::
   id (const image_type& i)
   {
     mssql::database* db (0);
@@ -48,8 +68,8 @@ namespace odb
     id_type id;
     {
       mssql::value_traits<
-          ::quint32,
-          mssql::id_int >::set_value (
+          long unsigned int,
+          mssql::id_bigint >::set_value (
         id,
         i.id_value,
         i.id_size_ind == SQL_NULL_DATA);
@@ -71,9 +91,9 @@ namespace odb
 
     // id
     //
-    if (sk != statement_update)
+    if (sk != statement_insert && sk != statement_update)
     {
-      b[n].type = mssql::bind::int_;
+      b[n].type = mssql::bind::bigint;
       b[n].buffer = &i.id_value;
       b[n].size_ind = &i.id_size_ind;
       n++;
@@ -114,7 +134,7 @@ namespace odb
   bind (mssql::bind* b, id_image_type& i)
   {
     std::size_t n (0);
-    b[n].type = mssql::bind::int_;
+    b[n].type = mssql::bind::bigint;
     b[n].buffer = &i.id_value;
     b[n].size_ind = &i.id_size_ind;
   }
@@ -132,21 +152,6 @@ namespace odb
 
     if (i.change_callback_.callback != 0)
       (i.change_callback_.callback) (i.change_callback_.context);
-
-    // id
-    //
-    if (sk == statement_insert)
-    {
-      ::quint32 const& v =
-        o.id;
-
-      bool is_null (false);
-      mssql::value_traits<
-          ::quint32,
-          mssql::id_int >::set_image (
-        i.id_value, is_null, v);
-      i.id_size_ind = is_null ? SQL_NULL_DATA : 0;
-    }
 
     // brand
     //
@@ -229,12 +234,12 @@ namespace odb
     // id
     //
     {
-      ::quint32& v =
+      long unsigned int& v =
         o.id;
 
       mssql::value_traits<
-          ::quint32,
-          mssql::id_int >::set_value (
+          long unsigned int,
+          mssql::id_bigint >::set_value (
         v,
         i.id_value,
         i.id_size_ind == SQL_NULL_DATA);
@@ -305,8 +310,8 @@ namespace odb
     {
       bool is_null (false);
       mssql::value_traits<
-          ::quint32,
-          mssql::id_int >::set_image (
+          long unsigned int,
+          mssql::id_bigint >::set_image (
         i.id_value, is_null, id);
       i.id_size_ind = is_null ? SQL_NULL_DATA : 0;
     }
@@ -314,13 +319,13 @@ namespace odb
 
   const char access::object_traits_impl< ::DBBusTypeInfo, id_mssql >::persist_statement[] =
   "INSERT INTO [DBBusTypeInfo] "
-  "([id], "
-  "[brand], "
+  "([brand], "
   "[model], "
   "[fuel_consumption], "
   "[comfort_level]) "
+  "OUTPUT INSERTED.[id] "
   "VALUES "
-  "(?, ?, ?, ?, ?)";
+  "(?, ?, ?, ?)";
 
   const char access::object_traits_impl< ::DBBusTypeInfo, id_mssql >::find_statement[] =
   "SELECT "
@@ -361,7 +366,7 @@ namespace odb
   "[DBBusTypeInfo]";
 
   void access::object_traits_impl< ::DBBusTypeInfo, id_mssql >::
-  persist (database& db, const object_type& obj)
+  persist (database& db, object_type& obj)
   {
     ODB_POTENTIALLY_UNUSED (db);
 
@@ -373,7 +378,7 @@ namespace odb
       conn.statement_cache ().find_object<object_type> ());
 
     callback (db,
-              obj,
+              static_cast<const object_type&> (obj),
               callback_event::pre_persist);
 
     image_type& im (sts.image ());
@@ -389,12 +394,25 @@ namespace odb
       imb.version++;
     }
 
+    {
+      id_image_type& i (sts.id_image ());
+      binding& b (sts.id_image_binding ());
+      if (i.version != sts.id_image_version () || b.version == 0)
+      {
+        bind (b.bind, i);
+        sts.id_image_version (i.version);
+        b.version++;
+      }
+    }
+
     insert_statement& st (sts.persist_statement ());
     if (!st.execute ())
       throw object_already_persistent ();
 
+    obj.id = id (sts.id_image ());
+
     callback (db,
-              obj,
+              static_cast<const object_type&> (obj),
               callback_event::post_persist);
   }
 
@@ -753,6 +771,26 @@ namespace odb
 
   access::object_traits_impl< ::DBBusState, id_mssql >::id_type
   access::object_traits_impl< ::DBBusState, id_mssql >::
+  id (const id_image_type& i)
+  {
+    mssql::database* db (0);
+    ODB_POTENTIALLY_UNUSED (db);
+
+    id_type id;
+    {
+      mssql::value_traits<
+          long unsigned int,
+          mssql::id_bigint >::set_value (
+        id,
+        i.id_value,
+        i.id_size_ind == SQL_NULL_DATA);
+    }
+
+    return id;
+  }
+
+  access::object_traits_impl< ::DBBusState, id_mssql >::id_type
+  access::object_traits_impl< ::DBBusState, id_mssql >::
   id (const image_type& i)
   {
     mssql::database* db (0);
@@ -761,8 +799,8 @@ namespace odb
     id_type id;
     {
       mssql::value_traits<
-          ::quint32,
-          mssql::id_int >::set_value (
+          long unsigned int,
+          mssql::id_bigint >::set_value (
         id,
         i.id_value,
         i.id_size_ind == SQL_NULL_DATA);
@@ -784,9 +822,9 @@ namespace odb
 
     // id
     //
-    if (sk != statement_update)
+    if (sk != statement_insert && sk != statement_update)
     {
-      b[n].type = mssql::bind::int_;
+      b[n].type = mssql::bind::bigint;
       b[n].buffer = &i.id_value;
       b[n].size_ind = &i.id_size_ind;
       n++;
@@ -825,7 +863,7 @@ namespace odb
   bind (mssql::bind* b, id_image_type& i)
   {
     std::size_t n (0);
-    b[n].type = mssql::bind::int_;
+    b[n].type = mssql::bind::bigint;
     b[n].buffer = &i.id_value;
     b[n].size_ind = &i.id_size_ind;
   }
@@ -843,21 +881,6 @@ namespace odb
 
     if (i.change_callback_.callback != 0)
       (i.change_callback_.callback) (i.change_callback_.context);
-
-    // id
-    //
-    if (sk == statement_insert)
-    {
-      ::quint32 const& v =
-        o.id;
-
-      bool is_null (false);
-      mssql::value_traits<
-          ::quint32,
-          mssql::id_int >::set_image (
-        i.id_value, is_null, v);
-      i.id_size_ind = is_null ? SQL_NULL_DATA : 0;
-    }
 
     // durability
     //
@@ -928,12 +951,12 @@ namespace odb
     // id
     //
     {
-      ::quint32& v =
+      long unsigned int& v =
         o.id;
 
       mssql::value_traits<
-          ::quint32,
-          mssql::id_int >::set_value (
+          long unsigned int,
+          mssql::id_bigint >::set_value (
         v,
         i.id_value,
         i.id_size_ind == SQL_NULL_DATA);
@@ -1002,8 +1025,8 @@ namespace odb
     {
       bool is_null (false);
       mssql::value_traits<
-          ::quint32,
-          mssql::id_int >::set_image (
+          long unsigned int,
+          mssql::id_bigint >::set_image (
         i.id_value, is_null, id);
       i.id_size_ind = is_null ? SQL_NULL_DATA : 0;
     }
@@ -1011,13 +1034,13 @@ namespace odb
 
   const char access::object_traits_impl< ::DBBusState, id_mssql >::persist_statement[] =
   "INSERT INTO [DBBusState] "
-  "([id], "
-  "[durability], "
+  "([durability], "
   "[last_technical_inspection_date], "
   "[next_technical_inspection_date], "
   "[is_avalible]) "
+  "OUTPUT INSERTED.[id] "
   "VALUES "
-  "(?, ?, ?, ?, ?)";
+  "(?, ?, ?, ?)";
 
   const char access::object_traits_impl< ::DBBusState, id_mssql >::find_statement[] =
   "SELECT "
@@ -1058,7 +1081,7 @@ namespace odb
   "[DBBusState]";
 
   void access::object_traits_impl< ::DBBusState, id_mssql >::
-  persist (database& db, const object_type& obj)
+  persist (database& db, object_type& obj)
   {
     ODB_POTENTIALLY_UNUSED (db);
 
@@ -1070,7 +1093,7 @@ namespace odb
       conn.statement_cache ().find_object<object_type> ());
 
     callback (db,
-              obj,
+              static_cast<const object_type&> (obj),
               callback_event::pre_persist);
 
     image_type& im (sts.image ());
@@ -1086,12 +1109,25 @@ namespace odb
       imb.version++;
     }
 
+    {
+      id_image_type& i (sts.id_image ());
+      binding& b (sts.id_image_binding ());
+      if (i.version != sts.id_image_version () || b.version == 0)
+      {
+        bind (b.bind, i);
+        sts.id_image_version (i.version);
+        b.version++;
+      }
+    }
+
     insert_statement& st (sts.persist_statement ());
     if (!st.execute ())
       throw object_already_persistent ();
 
+    obj.id = id (sts.id_image ());
+
     callback (db,
-              obj,
+              static_cast<const object_type&> (obj),
               callback_event::post_persist);
   }
 
@@ -1460,6 +1496,26 @@ namespace odb
 
   access::object_traits_impl< ::DBBus, id_mssql >::id_type
   access::object_traits_impl< ::DBBus, id_mssql >::
+  id (const id_image_type& i)
+  {
+    mssql::database* db (0);
+    ODB_POTENTIALLY_UNUSED (db);
+
+    id_type id;
+    {
+      mssql::value_traits<
+          long unsigned int,
+          mssql::id_bigint >::set_value (
+        id,
+        i.id_value,
+        i.id_size_ind == SQL_NULL_DATA);
+    }
+
+    return id;
+  }
+
+  access::object_traits_impl< ::DBBus, id_mssql >::id_type
+  access::object_traits_impl< ::DBBus, id_mssql >::
   id (const image_type& i)
   {
     mssql::database* db (0);
@@ -1468,8 +1524,8 @@ namespace odb
     id_type id;
     {
       mssql::value_traits<
-          ::quint32,
-          mssql::id_int >::set_value (
+          long unsigned int,
+          mssql::id_bigint >::set_value (
         id,
         i.id_value,
         i.id_size_ind == SQL_NULL_DATA);
@@ -1491,9 +1547,9 @@ namespace odb
 
     // id
     //
-    if (sk != statement_update)
+    if (sk != statement_insert && sk != statement_update)
     {
-      b[n].type = mssql::bind::int_;
+      b[n].type = mssql::bind::bigint;
       b[n].buffer = &i.id_value;
       b[n].size_ind = &i.id_size_ind;
       n++;
@@ -1501,14 +1557,14 @@ namespace odb
 
     // info
     //
-    b[n].type = mssql::bind::int_;
+    b[n].type = mssql::bind::bigint;
     b[n].buffer = &i.info_value;
     b[n].size_ind = &i.info_size_ind;
     n++;
 
     // state
     //
-    b[n].type = mssql::bind::int_;
+    b[n].type = mssql::bind::bigint;
     b[n].buffer = &i.state_value;
     b[n].size_ind = &i.state_size_ind;
     n++;
@@ -1525,7 +1581,7 @@ namespace odb
   bind (mssql::bind* b, id_image_type& i)
   {
     std::size_t n (0);
-    b[n].type = mssql::bind::int_;
+    b[n].type = mssql::bind::bigint;
     b[n].buffer = &i.id_value;
     b[n].size_ind = &i.id_size_ind;
   }
@@ -1544,21 +1600,6 @@ namespace odb
     if (i.change_callback_.callback != 0)
       (i.change_callback_.callback) (i.change_callback_.context);
 
-    // id
-    //
-    if (sk == statement_insert)
-    {
-      ::quint32 const& v =
-        o.id;
-
-      bool is_null (false);
-      mssql::value_traits<
-          ::quint32,
-          mssql::id_int >::set_image (
-        i.id_value, is_null, v);
-      i.id_size_ind = is_null ? SQL_NULL_DATA : 0;
-    }
-
     // info
     //
     {
@@ -1576,7 +1617,7 @@ namespace odb
 
         mssql::value_traits<
             obj_traits::id_type,
-            mssql::id_int >::set_image (
+            mssql::id_bigint >::set_image (
           i.info_value, is_null, id);
         i.info_size_ind = is_null ? SQL_NULL_DATA : 0;
       }
@@ -1601,7 +1642,7 @@ namespace odb
 
         mssql::value_traits<
             obj_traits::id_type,
-            mssql::id_int >::set_image (
+            mssql::id_bigint >::set_image (
           i.state_value, is_null, id);
         i.state_size_ind = is_null ? SQL_NULL_DATA : 0;
       }
@@ -1636,12 +1677,12 @@ namespace odb
     // id
     //
     {
-      ::quint32& v =
+      long unsigned int& v =
         o.id;
 
       mssql::value_traits<
-          ::quint32,
-          mssql::id_int >::set_value (
+          long unsigned int,
+          mssql::id_bigint >::set_value (
         v,
         i.id_value,
         i.id_size_ind == SQL_NULL_DATA);
@@ -1663,7 +1704,7 @@ namespace odb
         obj_traits::id_type id;
         mssql::value_traits<
             obj_traits::id_type,
-            mssql::id_int >::set_value (
+            mssql::id_bigint >::set_value (
           id,
           i.info_value,
           i.info_size_ind == SQL_NULL_DATA);
@@ -1694,7 +1735,7 @@ namespace odb
         obj_traits::id_type id;
         mssql::value_traits<
             obj_traits::id_type,
-            mssql::id_int >::set_value (
+            mssql::id_bigint >::set_value (
           id,
           i.state_value,
           i.state_size_ind == SQL_NULL_DATA);
@@ -1730,8 +1771,8 @@ namespace odb
     {
       bool is_null (false);
       mssql::value_traits<
-          ::quint32,
-          mssql::id_int >::set_image (
+          long unsigned int,
+          mssql::id_bigint >::set_image (
         i.id_value, is_null, id);
       i.id_size_ind = is_null ? SQL_NULL_DATA : 0;
     }
@@ -1739,12 +1780,12 @@ namespace odb
 
   const char access::object_traits_impl< ::DBBus, id_mssql >::persist_statement[] =
   "INSERT INTO [DBBus] "
-  "([id], "
-  "[info], "
+  "([info], "
   "[state], "
   "[purchase_date]) "
+  "OUTPUT INSERTED.[id] "
   "VALUES "
-  "(?, ?, ?, ?)";
+  "(?, ?, ?)";
 
   const char access::object_traits_impl< ::DBBus, id_mssql >::find_statement[] =
   "SELECT "
@@ -1784,7 +1825,7 @@ namespace odb
   "[DBBus]";
 
   void access::object_traits_impl< ::DBBus, id_mssql >::
-  persist (database& db, const object_type& obj)
+  persist (database& db, object_type& obj)
   {
     ODB_POTENTIALLY_UNUSED (db);
 
@@ -1796,7 +1837,7 @@ namespace odb
       conn.statement_cache ().find_object<object_type> ());
 
     callback (db,
-              obj,
+              static_cast<const object_type&> (obj),
               callback_event::pre_persist);
 
     image_type& im (sts.image ());
@@ -1812,12 +1853,25 @@ namespace odb
       imb.version++;
     }
 
+    {
+      id_image_type& i (sts.id_image ());
+      binding& b (sts.id_image_binding ());
+      if (i.version != sts.id_image_version () || b.version == 0)
+      {
+        bind (b.bind, i);
+        sts.id_image_version (i.version);
+        b.version++;
+      }
+    }
+
     insert_statement& st (sts.persist_statement ());
     if (!st.execute ())
       throw object_already_persistent ();
 
+    obj.id = id (sts.id_image ());
+
     callback (db,
-              obj,
+              static_cast<const object_type&> (obj),
               callback_event::post_persist);
   }
 
@@ -2176,6 +2230,26 @@ namespace odb
 
   access::object_traits_impl< ::DBCity, id_mssql >::id_type
   access::object_traits_impl< ::DBCity, id_mssql >::
+  id (const id_image_type& i)
+  {
+    mssql::database* db (0);
+    ODB_POTENTIALLY_UNUSED (db);
+
+    id_type id;
+    {
+      mssql::value_traits<
+          long unsigned int,
+          mssql::id_bigint >::set_value (
+        id,
+        i.id_value,
+        i.id_size_ind == SQL_NULL_DATA);
+    }
+
+    return id;
+  }
+
+  access::object_traits_impl< ::DBCity, id_mssql >::id_type
+  access::object_traits_impl< ::DBCity, id_mssql >::
   id (const image_type& i)
   {
     mssql::database* db (0);
@@ -2184,8 +2258,8 @@ namespace odb
     id_type id;
     {
       mssql::value_traits<
-          ::quint32,
-          mssql::id_int >::set_value (
+          long unsigned int,
+          mssql::id_bigint >::set_value (
         id,
         i.id_value,
         i.id_size_ind == SQL_NULL_DATA);
@@ -2207,9 +2281,9 @@ namespace odb
 
     // id
     //
-    if (sk != statement_update)
+    if (sk != statement_insert && sk != statement_update)
     {
-      b[n].type = mssql::bind::int_;
+      b[n].type = mssql::bind::bigint;
       b[n].buffer = &i.id_value;
       b[n].size_ind = &i.id_size_ind;
       n++;
@@ -2251,7 +2325,7 @@ namespace odb
   bind (mssql::bind* b, id_image_type& i)
   {
     std::size_t n (0);
-    b[n].type = mssql::bind::int_;
+    b[n].type = mssql::bind::bigint;
     b[n].buffer = &i.id_value;
     b[n].size_ind = &i.id_size_ind;
   }
@@ -2269,21 +2343,6 @@ namespace odb
 
     if (i.change_callback_.callback != 0)
       (i.change_callback_.callback) (i.change_callback_.context);
-
-    // id
-    //
-    if (sk == statement_insert)
-    {
-      ::quint32 const& v =
-        o.id;
-
-      bool is_null (false);
-      mssql::value_traits<
-          ::quint32,
-          mssql::id_int >::set_image (
-        i.id_value, is_null, v);
-      i.id_size_ind = is_null ? SQL_NULL_DATA : 0;
-    }
 
     // name
     //
@@ -2360,12 +2419,12 @@ namespace odb
     // id
     //
     {
-      ::quint32& v =
+      long unsigned int& v =
         o.id;
 
       mssql::value_traits<
-          ::quint32,
-          mssql::id_int >::set_value (
+          long unsigned int,
+          mssql::id_bigint >::set_value (
         v,
         i.id_value,
         i.id_size_ind == SQL_NULL_DATA);
@@ -2435,8 +2494,8 @@ namespace odb
     {
       bool is_null (false);
       mssql::value_traits<
-          ::quint32,
-          mssql::id_int >::set_image (
+          long unsigned int,
+          mssql::id_bigint >::set_image (
         i.id_value, is_null, id);
       i.id_size_ind = is_null ? SQL_NULL_DATA : 0;
     }
@@ -2444,13 +2503,13 @@ namespace odb
 
   const char access::object_traits_impl< ::DBCity, id_mssql >::persist_statement[] =
   "INSERT INTO [DBCity] "
-  "([id], "
-  "[name], "
+  "([name], "
   "[population], "
   "[location_x], "
   "[location_y]) "
+  "OUTPUT INSERTED.[id] "
   "VALUES "
-  "(?, ?, ?, ?, ?)";
+  "(?, ?, ?, ?)";
 
   const char access::object_traits_impl< ::DBCity, id_mssql >::find_statement[] =
   "SELECT "
@@ -2491,7 +2550,7 @@ namespace odb
   "[DBCity]";
 
   void access::object_traits_impl< ::DBCity, id_mssql >::
-  persist (database& db, const object_type& obj)
+  persist (database& db, object_type& obj)
   {
     ODB_POTENTIALLY_UNUSED (db);
 
@@ -2503,7 +2562,7 @@ namespace odb
       conn.statement_cache ().find_object<object_type> ());
 
     callback (db,
-              obj,
+              static_cast<const object_type&> (obj),
               callback_event::pre_persist);
 
     image_type& im (sts.image ());
@@ -2519,12 +2578,25 @@ namespace odb
       imb.version++;
     }
 
+    {
+      id_image_type& i (sts.id_image ());
+      binding& b (sts.id_image_binding ());
+      if (i.version != sts.id_image_version () || b.version == 0)
+      {
+        bind (b.bind, i);
+        sts.id_image_version (i.version);
+        b.version++;
+      }
+    }
+
     insert_statement& st (sts.persist_statement ());
     if (!st.execute ())
       throw object_already_persistent ();
 
+    obj.id = id (sts.id_image ());
+
     callback (db,
-              obj,
+              static_cast<const object_type&> (obj),
               callback_event::post_persist);
   }
 
@@ -2937,7 +3009,7 @@ namespace odb
 
     // value
     //
-    b[n].type = mssql::bind::int_;
+    b[n].type = mssql::bind::bigint;
     b[n].buffer = &d.value_value;
     b[n].size_ind = &d.value_size_ind;
   }
@@ -2978,7 +3050,7 @@ namespace odb
 
         mssql::value_traits<
             obj_traits::id_type,
-            mssql::id_int >::set_image (
+            mssql::id_bigint >::set_image (
           i.value_value, is_null, id);
         i.value_size_ind = is_null ? SQL_NULL_DATA : 0;
       }
@@ -3019,7 +3091,7 @@ namespace odb
         obj_traits::id_type id;
         mssql::value_traits<
             obj_traits::id_type,
-            mssql::id_int >::set_value (
+            mssql::id_bigint >::set_value (
           id,
           i.value_value,
           i.value_size_ind == SQL_NULL_DATA);
@@ -3150,6 +3222,26 @@ namespace odb
 
   access::object_traits_impl< ::DBPath, id_mssql >::id_type
   access::object_traits_impl< ::DBPath, id_mssql >::
+  id (const id_image_type& i)
+  {
+    mssql::database* db (0);
+    ODB_POTENTIALLY_UNUSED (db);
+
+    id_type id;
+    {
+      mssql::value_traits<
+          long unsigned int,
+          mssql::id_bigint >::set_value (
+        id,
+        i.id_value,
+        i.id_size_ind == SQL_NULL_DATA);
+    }
+
+    return id;
+  }
+
+  access::object_traits_impl< ::DBPath, id_mssql >::id_type
+  access::object_traits_impl< ::DBPath, id_mssql >::
   id (const image_type& i)
   {
     mssql::database* db (0);
@@ -3158,8 +3250,8 @@ namespace odb
     id_type id;
     {
       mssql::value_traits<
-          ::quint32,
-          mssql::id_int >::set_value (
+          long unsigned int,
+          mssql::id_bigint >::set_value (
         id,
         i.id_value,
         i.id_size_ind == SQL_NULL_DATA);
@@ -3181,9 +3273,9 @@ namespace odb
 
     // id
     //
-    if (sk != statement_update)
+    if (sk != statement_insert && sk != statement_update)
     {
-      b[n].type = mssql::bind::int_;
+      b[n].type = mssql::bind::bigint;
       b[n].buffer = &i.id_value;
       b[n].size_ind = &i.id_size_ind;
       n++;
@@ -3209,7 +3301,7 @@ namespace odb
   bind (mssql::bind* b, id_image_type& i)
   {
     std::size_t n (0);
-    b[n].type = mssql::bind::int_;
+    b[n].type = mssql::bind::bigint;
     b[n].buffer = &i.id_value;
     b[n].size_ind = &i.id_size_ind;
   }
@@ -3227,21 +3319,6 @@ namespace odb
 
     if (i.change_callback_.callback != 0)
       (i.change_callback_.callback) (i.change_callback_.context);
-
-    // id
-    //
-    if (sk == statement_insert)
-    {
-      ::quint32 const& v =
-        o.id;
-
-      bool is_null (false);
-      mssql::value_traits<
-          ::quint32,
-          mssql::id_int >::set_image (
-        i.id_value, is_null, v);
-      i.id_size_ind = is_null ? SQL_NULL_DATA : 0;
-    }
 
     // quality_level
     //
@@ -3284,12 +3361,12 @@ namespace odb
     // id
     //
     {
-      ::quint32& v =
+      long unsigned int& v =
         o.id;
 
       mssql::value_traits<
-          ::quint32,
-          mssql::id_int >::set_value (
+          long unsigned int,
+          mssql::id_bigint >::set_value (
         v,
         i.id_value,
         i.id_size_ind == SQL_NULL_DATA);
@@ -3330,8 +3407,8 @@ namespace odb
     {
       bool is_null (false);
       mssql::value_traits<
-          ::quint32,
-          mssql::id_int >::set_image (
+          long unsigned int,
+          mssql::id_bigint >::set_image (
         i.id_value, is_null, id);
       i.id_size_ind = is_null ? SQL_NULL_DATA : 0;
     }
@@ -3339,11 +3416,11 @@ namespace odb
 
   const char access::object_traits_impl< ::DBPath, id_mssql >::persist_statement[] =
   "INSERT INTO [DBPath] "
-  "([id], "
-  "[quality_level], "
+  "([quality_level], "
   "[milage]) "
+  "OUTPUT INSERTED.[id] "
   "VALUES "
-  "(?, ?, ?)";
+  "(?, ?)";
 
   const char access::object_traits_impl< ::DBPath, id_mssql >::find_statement[] =
   "SELECT "
@@ -3378,7 +3455,7 @@ namespace odb
   "[DBPath]";
 
   void access::object_traits_impl< ::DBPath, id_mssql >::
-  persist (database& db, const object_type& obj)
+  persist (database& db, object_type& obj)
   {
     ODB_POTENTIALLY_UNUSED (db);
 
@@ -3390,7 +3467,7 @@ namespace odb
       conn.statement_cache ().find_object<object_type> ());
 
     callback (db,
-              obj,
+              static_cast<const object_type&> (obj),
               callback_event::pre_persist);
 
     image_type& im (sts.image ());
@@ -3406,9 +3483,22 @@ namespace odb
       imb.version++;
     }
 
+    {
+      id_image_type& i (sts.id_image ());
+      binding& b (sts.id_image_binding ());
+      if (i.version != sts.id_image_version () || b.version == 0)
+      {
+        bind (b.bind, i);
+        sts.id_image_version (i.version);
+        b.version++;
+      }
+    }
+
     insert_statement& st (sts.persist_statement ());
     if (!st.execute ())
       throw object_already_persistent ();
+
+    obj.id = id (sts.id_image ());
 
     id_image_type& i (sts.id_image ());
     init (i, obj.id);
@@ -3435,7 +3525,7 @@ namespace odb
     }
 
     callback (db,
-              obj,
+              static_cast<const object_type&> (obj),
               callback_event::post_persist);
   }
 
@@ -3835,6 +3925,26 @@ namespace odb
 
   access::object_traits_impl< ::DBRaceStatistics, id_mssql >::id_type
   access::object_traits_impl< ::DBRaceStatistics, id_mssql >::
+  id (const id_image_type& i)
+  {
+    mssql::database* db (0);
+    ODB_POTENTIALLY_UNUSED (db);
+
+    id_type id;
+    {
+      mssql::value_traits<
+          long unsigned int,
+          mssql::id_bigint >::set_value (
+        id,
+        i.id_value,
+        i.id_size_ind == SQL_NULL_DATA);
+    }
+
+    return id;
+  }
+
+  access::object_traits_impl< ::DBRaceStatistics, id_mssql >::id_type
+  access::object_traits_impl< ::DBRaceStatistics, id_mssql >::
   id (const image_type& i)
   {
     mssql::database* db (0);
@@ -3843,8 +3953,8 @@ namespace odb
     id_type id;
     {
       mssql::value_traits<
-          ::quint32,
-          mssql::id_int >::set_value (
+          long unsigned int,
+          mssql::id_bigint >::set_value (
         id,
         i.id_value,
         i.id_size_ind == SQL_NULL_DATA);
@@ -3866,9 +3976,9 @@ namespace odb
 
     // id
     //
-    if (sk != statement_update)
+    if (sk != statement_insert && sk != statement_update)
     {
-      b[n].type = mssql::bind::int_;
+      b[n].type = mssql::bind::bigint;
       b[n].buffer = &i.id_value;
       b[n].size_ind = &i.id_size_ind;
       n++;
@@ -3901,7 +4011,7 @@ namespace odb
   bind (mssql::bind* b, id_image_type& i)
   {
     std::size_t n (0);
-    b[n].type = mssql::bind::int_;
+    b[n].type = mssql::bind::bigint;
     b[n].buffer = &i.id_value;
     b[n].size_ind = &i.id_size_ind;
   }
@@ -3919,21 +4029,6 @@ namespace odb
 
     if (i.change_callback_.callback != 0)
       (i.change_callback_.callback) (i.change_callback_.context);
-
-    // id
-    //
-    if (sk == statement_insert)
-    {
-      ::quint32 const& v =
-        o.id;
-
-      bool is_null (false);
-      mssql::value_traits<
-          ::quint32,
-          mssql::id_int >::set_image (
-        i.id_value, is_null, v);
-      i.id_size_ind = is_null ? SQL_NULL_DATA : 0;
-    }
 
     // abs_popularity
     //
@@ -3990,12 +4085,12 @@ namespace odb
     // id
     //
     {
-      ::quint32& v =
+      long unsigned int& v =
         o.id;
 
       mssql::value_traits<
-          ::quint32,
-          mssql::id_int >::set_value (
+          long unsigned int,
+          mssql::id_bigint >::set_value (
         v,
         i.id_value,
         i.id_size_ind == SQL_NULL_DATA);
@@ -4050,8 +4145,8 @@ namespace odb
     {
       bool is_null (false);
       mssql::value_traits<
-          ::quint32,
-          mssql::id_int >::set_image (
+          long unsigned int,
+          mssql::id_bigint >::set_image (
         i.id_value, is_null, id);
       i.id_size_ind = is_null ? SQL_NULL_DATA : 0;
     }
@@ -4059,12 +4154,12 @@ namespace odb
 
   const char access::object_traits_impl< ::DBRaceStatistics, id_mssql >::persist_statement[] =
   "INSERT INTO [DBRaceStatistics] "
-  "([id], "
-  "[abs_popularity], "
+  "([abs_popularity], "
   "[derivative_popularity], "
   "[trust_factor]) "
+  "OUTPUT INSERTED.[id] "
   "VALUES "
-  "(?, ?, ?, ?)";
+  "(?, ?, ?)";
 
   const char access::object_traits_impl< ::DBRaceStatistics, id_mssql >::find_statement[] =
   "SELECT "
@@ -4102,7 +4197,7 @@ namespace odb
   "[DBRaceStatistics]";
 
   void access::object_traits_impl< ::DBRaceStatistics, id_mssql >::
-  persist (database& db, const object_type& obj)
+  persist (database& db, object_type& obj)
   {
     ODB_POTENTIALLY_UNUSED (db);
 
@@ -4114,7 +4209,7 @@ namespace odb
       conn.statement_cache ().find_object<object_type> ());
 
     callback (db,
-              obj,
+              static_cast<const object_type&> (obj),
               callback_event::pre_persist);
 
     image_type& im (sts.image ());
@@ -4130,12 +4225,25 @@ namespace odb
       imb.version++;
     }
 
+    {
+      id_image_type& i (sts.id_image ());
+      binding& b (sts.id_image_binding ());
+      if (i.version != sts.id_image_version () || b.version == 0)
+      {
+        bind (b.bind, i);
+        sts.id_image_version (i.version);
+        b.version++;
+      }
+    }
+
     insert_statement& st (sts.persist_statement ());
     if (!st.execute ())
       throw object_already_persistent ();
 
+    obj.id = id (sts.id_image ());
+
     callback (db,
-              obj,
+              static_cast<const object_type&> (obj),
               callback_event::post_persist);
   }
 
@@ -4494,6 +4602,26 @@ namespace odb
 
   access::object_traits_impl< ::DBRouteStatistics, id_mssql >::id_type
   access::object_traits_impl< ::DBRouteStatistics, id_mssql >::
+  id (const id_image_type& i)
+  {
+    mssql::database* db (0);
+    ODB_POTENTIALLY_UNUSED (db);
+
+    id_type id;
+    {
+      mssql::value_traits<
+          long unsigned int,
+          mssql::id_bigint >::set_value (
+        id,
+        i.id_value,
+        i.id_size_ind == SQL_NULL_DATA);
+    }
+
+    return id;
+  }
+
+  access::object_traits_impl< ::DBRouteStatistics, id_mssql >::id_type
+  access::object_traits_impl< ::DBRouteStatistics, id_mssql >::
   id (const image_type& i)
   {
     mssql::database* db (0);
@@ -4502,8 +4630,8 @@ namespace odb
     id_type id;
     {
       mssql::value_traits<
-          ::quint32,
-          mssql::id_int >::set_value (
+          long unsigned int,
+          mssql::id_bigint >::set_value (
         id,
         i.id_value,
         i.id_size_ind == SQL_NULL_DATA);
@@ -4525,9 +4653,9 @@ namespace odb
 
     // id
     //
-    if (sk != statement_update)
+    if (sk != statement_insert && sk != statement_update)
     {
-      b[n].type = mssql::bind::int_;
+      b[n].type = mssql::bind::bigint;
       b[n].buffer = &i.id_value;
       b[n].size_ind = &i.id_size_ind;
       n++;
@@ -4560,7 +4688,7 @@ namespace odb
   bind (mssql::bind* b, id_image_type& i)
   {
     std::size_t n (0);
-    b[n].type = mssql::bind::int_;
+    b[n].type = mssql::bind::bigint;
     b[n].buffer = &i.id_value;
     b[n].size_ind = &i.id_size_ind;
   }
@@ -4578,21 +4706,6 @@ namespace odb
 
     if (i.change_callback_.callback != 0)
       (i.change_callback_.callback) (i.change_callback_.context);
-
-    // id
-    //
-    if (sk == statement_insert)
-    {
-      ::quint32 const& v =
-        o.id;
-
-      bool is_null (false);
-      mssql::value_traits<
-          ::quint32,
-          mssql::id_int >::set_image (
-        i.id_value, is_null, v);
-      i.id_size_ind = is_null ? SQL_NULL_DATA : 0;
-    }
 
     // quality_factor
     //
@@ -4649,12 +4762,12 @@ namespace odb
     // id
     //
     {
-      ::quint32& v =
+      long unsigned int& v =
         o.id;
 
       mssql::value_traits<
-          ::quint32,
-          mssql::id_int >::set_value (
+          long unsigned int,
+          mssql::id_bigint >::set_value (
         v,
         i.id_value,
         i.id_size_ind == SQL_NULL_DATA);
@@ -4709,8 +4822,8 @@ namespace odb
     {
       bool is_null (false);
       mssql::value_traits<
-          ::quint32,
-          mssql::id_int >::set_image (
+          long unsigned int,
+          mssql::id_bigint >::set_image (
         i.id_value, is_null, id);
       i.id_size_ind = is_null ? SQL_NULL_DATA : 0;
     }
@@ -4718,12 +4831,12 @@ namespace odb
 
   const char access::object_traits_impl< ::DBRouteStatistics, id_mssql >::persist_statement[] =
   "INSERT INTO [DBRouteStatistics] "
-  "([id], "
-  "[quality_factor], "
+  "([quality_factor], "
   "[square_coverage], "
   "[population_coverage]) "
+  "OUTPUT INSERTED.[id] "
   "VALUES "
-  "(?, ?, ?, ?)";
+  "(?, ?, ?)";
 
   const char access::object_traits_impl< ::DBRouteStatistics, id_mssql >::find_statement[] =
   "SELECT "
@@ -4761,7 +4874,7 @@ namespace odb
   "[DBRouteStatistics]";
 
   void access::object_traits_impl< ::DBRouteStatistics, id_mssql >::
-  persist (database& db, const object_type& obj)
+  persist (database& db, object_type& obj)
   {
     ODB_POTENTIALLY_UNUSED (db);
 
@@ -4773,7 +4886,7 @@ namespace odb
       conn.statement_cache ().find_object<object_type> ());
 
     callback (db,
-              obj,
+              static_cast<const object_type&> (obj),
               callback_event::pre_persist);
 
     image_type& im (sts.image ());
@@ -4789,12 +4902,25 @@ namespace odb
       imb.version++;
     }
 
+    {
+      id_image_type& i (sts.id_image ());
+      binding& b (sts.id_image_binding ());
+      if (i.version != sts.id_image_version () || b.version == 0)
+      {
+        bind (b.bind, i);
+        sts.id_image_version (i.version);
+        b.version++;
+      }
+    }
+
     insert_statement& st (sts.persist_statement ());
     if (!st.execute ())
       throw object_already_persistent ();
 
+    obj.id = id (sts.id_image ());
+
     callback (db,
-              obj,
+              static_cast<const object_type&> (obj),
               callback_event::post_persist);
   }
 
@@ -5163,6 +5289,26 @@ namespace odb
 
   access::object_traits_impl< ::DBRoute, id_mssql >::id_type
   access::object_traits_impl< ::DBRoute, id_mssql >::
+  id (const id_image_type& i)
+  {
+    mssql::database* db (0);
+    ODB_POTENTIALLY_UNUSED (db);
+
+    id_type id;
+    {
+      mssql::value_traits<
+          long unsigned int,
+          mssql::id_bigint >::set_value (
+        id,
+        i.id_value,
+        i.id_size_ind == SQL_NULL_DATA);
+    }
+
+    return id;
+  }
+
+  access::object_traits_impl< ::DBRoute, id_mssql >::id_type
+  access::object_traits_impl< ::DBRoute, id_mssql >::
   id (const image_type& i)
   {
     mssql::database* db (0);
@@ -5171,8 +5317,8 @@ namespace odb
     id_type id;
     {
       mssql::value_traits<
-          ::quint32,
-          mssql::id_int >::set_value (
+          long unsigned int,
+          mssql::id_bigint >::set_value (
         id,
         i.id_value,
         i.id_size_ind == SQL_NULL_DATA);
@@ -5194,9 +5340,9 @@ namespace odb
 
     // id
     //
-    if (sk != statement_update)
+    if (sk != statement_insert && sk != statement_update)
     {
-      b[n].type = mssql::bind::int_;
+      b[n].type = mssql::bind::bigint;
       b[n].buffer = &i.id_value;
       b[n].size_ind = &i.id_size_ind;
       n++;
@@ -5204,14 +5350,14 @@ namespace odb
 
     // path
     //
-    b[n].type = mssql::bind::int_;
+    b[n].type = mssql::bind::bigint;
     b[n].buffer = &i.path_value;
     b[n].size_ind = &i.path_size_ind;
     n++;
 
     // statistics
     //
-    b[n].type = mssql::bind::int_;
+    b[n].type = mssql::bind::bigint;
     b[n].buffer = &i.statistics_value;
     b[n].size_ind = &i.statistics_size_ind;
     n++;
@@ -5229,7 +5375,7 @@ namespace odb
   bind (mssql::bind* b, id_image_type& i)
   {
     std::size_t n (0);
-    b[n].type = mssql::bind::int_;
+    b[n].type = mssql::bind::bigint;
     b[n].buffer = &i.id_value;
     b[n].size_ind = &i.id_size_ind;
   }
@@ -5248,21 +5394,6 @@ namespace odb
     if (i.change_callback_.callback != 0)
       (i.change_callback_.callback) (i.change_callback_.context);
 
-    // id
-    //
-    if (sk == statement_insert)
-    {
-      ::quint32 const& v =
-        o.id;
-
-      bool is_null (false);
-      mssql::value_traits<
-          ::quint32,
-          mssql::id_int >::set_image (
-        i.id_value, is_null, v);
-      i.id_size_ind = is_null ? SQL_NULL_DATA : 0;
-    }
-
     // path
     //
     {
@@ -5280,7 +5411,7 @@ namespace odb
 
         mssql::value_traits<
             obj_traits::id_type,
-            mssql::id_int >::set_image (
+            mssql::id_bigint >::set_image (
           i.path_value, is_null, id);
         i.path_size_ind = is_null ? SQL_NULL_DATA : 0;
       }
@@ -5305,7 +5436,7 @@ namespace odb
 
         mssql::value_traits<
             obj_traits::id_type,
-            mssql::id_int >::set_image (
+            mssql::id_bigint >::set_image (
           i.statistics_value, is_null, id);
         i.statistics_size_ind = is_null ? SQL_NULL_DATA : 0;
       }
@@ -5340,12 +5471,12 @@ namespace odb
     // id
     //
     {
-      ::quint32& v =
+      long unsigned int& v =
         o.id;
 
       mssql::value_traits<
-          ::quint32,
-          mssql::id_int >::set_value (
+          long unsigned int,
+          mssql::id_bigint >::set_value (
         v,
         i.id_value,
         i.id_size_ind == SQL_NULL_DATA);
@@ -5367,7 +5498,7 @@ namespace odb
         obj_traits::id_type id;
         mssql::value_traits<
             obj_traits::id_type,
-            mssql::id_int >::set_value (
+            mssql::id_bigint >::set_value (
           id,
           i.path_value,
           i.path_size_ind == SQL_NULL_DATA);
@@ -5398,7 +5529,7 @@ namespace odb
         obj_traits::id_type id;
         mssql::value_traits<
             obj_traits::id_type,
-            mssql::id_int >::set_value (
+            mssql::id_bigint >::set_value (
           id,
           i.statistics_value,
           i.statistics_size_ind == SQL_NULL_DATA);
@@ -5434,8 +5565,8 @@ namespace odb
     {
       bool is_null (false);
       mssql::value_traits<
-          ::quint32,
-          mssql::id_int >::set_image (
+          long unsigned int,
+          mssql::id_bigint >::set_image (
         i.id_value, is_null, id);
       i.id_size_ind = is_null ? SQL_NULL_DATA : 0;
     }
@@ -5443,12 +5574,12 @@ namespace odb
 
   const char access::object_traits_impl< ::DBRoute, id_mssql >::persist_statement[] =
   "INSERT INTO [DBRoute] "
-  "([id], "
-  "[path], "
+  "([path], "
   "[statistics], "
   "[milage]) "
+  "OUTPUT INSERTED.[id] "
   "VALUES "
-  "(?, ?, ?, ?)";
+  "(?, ?, ?)";
 
   const char access::object_traits_impl< ::DBRoute, id_mssql >::find_statement[] =
   "SELECT "
@@ -5488,7 +5619,7 @@ namespace odb
   "[DBRoute]";
 
   void access::object_traits_impl< ::DBRoute, id_mssql >::
-  persist (database& db, const object_type& obj)
+  persist (database& db, object_type& obj)
   {
     ODB_POTENTIALLY_UNUSED (db);
 
@@ -5500,7 +5631,7 @@ namespace odb
       conn.statement_cache ().find_object<object_type> ());
 
     callback (db,
-              obj,
+              static_cast<const object_type&> (obj),
               callback_event::pre_persist);
 
     image_type& im (sts.image ());
@@ -5516,12 +5647,25 @@ namespace odb
       imb.version++;
     }
 
+    {
+      id_image_type& i (sts.id_image ());
+      binding& b (sts.id_image_binding ());
+      if (i.version != sts.id_image_version () || b.version == 0)
+      {
+        bind (b.bind, i);
+        sts.id_image_version (i.version);
+        b.version++;
+      }
+    }
+
     insert_statement& st (sts.persist_statement ());
     if (!st.execute ())
       throw object_already_persistent ();
 
+    obj.id = id (sts.id_image ());
+
     callback (db,
-              obj,
+              static_cast<const object_type&> (obj),
               callback_event::post_persist);
   }
 
@@ -5895,6 +6039,26 @@ namespace odb
 
   access::object_traits_impl< ::DBRace, id_mssql >::id_type
   access::object_traits_impl< ::DBRace, id_mssql >::
+  id (const id_image_type& i)
+  {
+    mssql::database* db (0);
+    ODB_POTENTIALLY_UNUSED (db);
+
+    id_type id;
+    {
+      mssql::value_traits<
+          long unsigned int,
+          mssql::id_bigint >::set_value (
+        id,
+        i.id_value,
+        i.id_size_ind == SQL_NULL_DATA);
+    }
+
+    return id;
+  }
+
+  access::object_traits_impl< ::DBRace, id_mssql >::id_type
+  access::object_traits_impl< ::DBRace, id_mssql >::
   id (const image_type& i)
   {
     mssql::database* db (0);
@@ -5903,8 +6067,8 @@ namespace odb
     id_type id;
     {
       mssql::value_traits<
-          ::quint32,
-          mssql::id_int >::set_value (
+          long unsigned int,
+          mssql::id_bigint >::set_value (
         id,
         i.id_value,
         i.id_size_ind == SQL_NULL_DATA);
@@ -5926,9 +6090,9 @@ namespace odb
 
     // id
     //
-    if (sk != statement_update)
+    if (sk != statement_insert && sk != statement_update)
     {
-      b[n].type = mssql::bind::int_;
+      b[n].type = mssql::bind::bigint;
       b[n].buffer = &i.id_value;
       b[n].size_ind = &i.id_size_ind;
       n++;
@@ -5936,21 +6100,21 @@ namespace odb
 
     // route
     //
-    b[n].type = mssql::bind::int_;
+    b[n].type = mssql::bind::bigint;
     b[n].buffer = &i.route_value;
     b[n].size_ind = &i.route_size_ind;
     n++;
 
     // bus_type_info
     //
-    b[n].type = mssql::bind::int_;
+    b[n].type = mssql::bind::bigint;
     b[n].buffer = &i.bus_type_info_value;
     b[n].size_ind = &i.bus_type_info_size_ind;
     n++;
 
     // statistics
     //
-    b[n].type = mssql::bind::int_;
+    b[n].type = mssql::bind::bigint;
     b[n].buffer = &i.statistics_value;
     b[n].size_ind = &i.statistics_size_ind;
     n++;
@@ -5996,7 +6160,7 @@ namespace odb
   bind (mssql::bind* b, id_image_type& i)
   {
     std::size_t n (0);
-    b[n].type = mssql::bind::int_;
+    b[n].type = mssql::bind::bigint;
     b[n].buffer = &i.id_value;
     b[n].size_ind = &i.id_size_ind;
   }
@@ -6015,21 +6179,6 @@ namespace odb
     if (i.change_callback_.callback != 0)
       (i.change_callback_.callback) (i.change_callback_.context);
 
-    // id
-    //
-    if (sk == statement_insert)
-    {
-      ::quint32 const& v =
-        o.id;
-
-      bool is_null (false);
-      mssql::value_traits<
-          ::quint32,
-          mssql::id_int >::set_image (
-        i.id_value, is_null, v);
-      i.id_size_ind = is_null ? SQL_NULL_DATA : 0;
-    }
-
     // route
     //
     {
@@ -6047,7 +6196,7 @@ namespace odb
 
         mssql::value_traits<
             obj_traits::id_type,
-            mssql::id_int >::set_image (
+            mssql::id_bigint >::set_image (
           i.route_value, is_null, id);
         i.route_size_ind = is_null ? SQL_NULL_DATA : 0;
       }
@@ -6072,7 +6221,7 @@ namespace odb
 
         mssql::value_traits<
             obj_traits::id_type,
-            mssql::id_int >::set_image (
+            mssql::id_bigint >::set_image (
           i.bus_type_info_value, is_null, id);
         i.bus_type_info_size_ind = is_null ? SQL_NULL_DATA : 0;
       }
@@ -6097,7 +6246,7 @@ namespace odb
 
         mssql::value_traits<
             obj_traits::id_type,
-            mssql::id_int >::set_image (
+            mssql::id_bigint >::set_image (
           i.statistics_value, is_null, id);
         i.statistics_size_ind = is_null ? SQL_NULL_DATA : 0;
       }
@@ -6190,12 +6339,12 @@ namespace odb
     // id
     //
     {
-      ::quint32& v =
+      long unsigned int& v =
         o.id;
 
       mssql::value_traits<
-          ::quint32,
-          mssql::id_int >::set_value (
+          long unsigned int,
+          mssql::id_bigint >::set_value (
         v,
         i.id_value,
         i.id_size_ind == SQL_NULL_DATA);
@@ -6217,7 +6366,7 @@ namespace odb
         obj_traits::id_type id;
         mssql::value_traits<
             obj_traits::id_type,
-            mssql::id_int >::set_value (
+            mssql::id_bigint >::set_value (
           id,
           i.route_value,
           i.route_size_ind == SQL_NULL_DATA);
@@ -6248,7 +6397,7 @@ namespace odb
         obj_traits::id_type id;
         mssql::value_traits<
             obj_traits::id_type,
-            mssql::id_int >::set_value (
+            mssql::id_bigint >::set_value (
           id,
           i.bus_type_info_value,
           i.bus_type_info_size_ind == SQL_NULL_DATA);
@@ -6279,7 +6428,7 @@ namespace odb
         obj_traits::id_type id;
         mssql::value_traits<
             obj_traits::id_type,
-            mssql::id_int >::set_value (
+            mssql::id_bigint >::set_value (
           id,
           i.statistics_value,
           i.statistics_size_ind == SQL_NULL_DATA);
@@ -6371,8 +6520,8 @@ namespace odb
     {
       bool is_null (false);
       mssql::value_traits<
-          ::quint32,
-          mssql::id_int >::set_image (
+          long unsigned int,
+          mssql::id_bigint >::set_image (
         i.id_value, is_null, id);
       i.id_size_ind = is_null ? SQL_NULL_DATA : 0;
     }
@@ -6380,8 +6529,7 @@ namespace odb
 
   const char access::object_traits_impl< ::DBRace, id_mssql >::persist_statement[] =
   "INSERT INTO [DBRace] "
-  "([id], "
-  "[route], "
+  "([route], "
   "[bus_type_info], "
   "[statistics], "
   "[duration], "
@@ -6389,8 +6537,9 @@ namespace odb
   "[expenses_coins], "
   "[ticket_price_grivnas], "
   "[ticket_price_coins]) "
+  "OUTPUT INSERTED.[id] "
   "VALUES "
-  "(?, ?, ?, ?, ?, ?, ?, ?, ?)";
+  "(?, ?, ?, ?, ?, ?, ?, ?)";
 
   const char access::object_traits_impl< ::DBRace, id_mssql >::find_statement[] =
   "SELECT "
@@ -6446,7 +6595,7 @@ namespace odb
   "[DBRace]";
 
   void access::object_traits_impl< ::DBRace, id_mssql >::
-  persist (database& db, const object_type& obj)
+  persist (database& db, object_type& obj)
   {
     ODB_POTENTIALLY_UNUSED (db);
 
@@ -6458,7 +6607,7 @@ namespace odb
       conn.statement_cache ().find_object<object_type> ());
 
     callback (db,
-              obj,
+              static_cast<const object_type&> (obj),
               callback_event::pre_persist);
 
     image_type& im (sts.image ());
@@ -6474,12 +6623,25 @@ namespace odb
       imb.version++;
     }
 
+    {
+      id_image_type& i (sts.id_image ());
+      binding& b (sts.id_image_binding ());
+      if (i.version != sts.id_image_version () || b.version == 0)
+      {
+        bind (b.bind, i);
+        sts.id_image_version (i.version);
+        b.version++;
+      }
+    }
+
     insert_statement& st (sts.persist_statement ());
     if (!st.execute ())
       throw object_already_persistent ();
 
+    obj.id = id (sts.id_image ());
+
     callback (db,
-              obj,
+              static_cast<const object_type&> (obj),
               callback_event::post_persist);
   }
 
@@ -6848,6 +7010,26 @@ namespace odb
 
   access::object_traits_impl< ::DBScheduledRace, id_mssql >::id_type
   access::object_traits_impl< ::DBScheduledRace, id_mssql >::
+  id (const id_image_type& i)
+  {
+    mssql::database* db (0);
+    ODB_POTENTIALLY_UNUSED (db);
+
+    id_type id;
+    {
+      mssql::value_traits<
+          long unsigned int,
+          mssql::id_bigint >::set_value (
+        id,
+        i.id_value,
+        i.id_size_ind == SQL_NULL_DATA);
+    }
+
+    return id;
+  }
+
+  access::object_traits_impl< ::DBScheduledRace, id_mssql >::id_type
+  access::object_traits_impl< ::DBScheduledRace, id_mssql >::
   id (const image_type& i)
   {
     mssql::database* db (0);
@@ -6856,8 +7038,8 @@ namespace odb
     id_type id;
     {
       mssql::value_traits<
-          ::quint32,
-          mssql::id_int >::set_value (
+          long unsigned int,
+          mssql::id_bigint >::set_value (
         id,
         i.id_value,
         i.id_size_ind == SQL_NULL_DATA);
@@ -6879,9 +7061,9 @@ namespace odb
 
     // id
     //
-    if (sk != statement_update)
+    if (sk != statement_insert && sk != statement_update)
     {
-      b[n].type = mssql::bind::int_;
+      b[n].type = mssql::bind::bigint;
       b[n].buffer = &i.id_value;
       b[n].size_ind = &i.id_size_ind;
       n++;
@@ -6889,14 +7071,14 @@ namespace odb
 
     // race
     //
-    b[n].type = mssql::bind::int_;
+    b[n].type = mssql::bind::bigint;
     b[n].buffer = &i.race_value;
     b[n].size_ind = &i.race_size_ind;
     n++;
 
     // bus
     //
-    b[n].type = mssql::bind::int_;
+    b[n].type = mssql::bind::bigint;
     b[n].buffer = &i.bus_value;
     b[n].size_ind = &i.bus_size_ind;
     n++;
@@ -6922,7 +7104,7 @@ namespace odb
   bind (mssql::bind* b, id_image_type& i)
   {
     std::size_t n (0);
-    b[n].type = mssql::bind::int_;
+    b[n].type = mssql::bind::bigint;
     b[n].buffer = &i.id_value;
     b[n].size_ind = &i.id_size_ind;
   }
@@ -6941,21 +7123,6 @@ namespace odb
     if (i.change_callback_.callback != 0)
       (i.change_callback_.callback) (i.change_callback_.context);
 
-    // id
-    //
-    if (sk == statement_insert)
-    {
-      ::quint32 const& v =
-        o.id;
-
-      bool is_null (false);
-      mssql::value_traits<
-          ::quint32,
-          mssql::id_int >::set_image (
-        i.id_value, is_null, v);
-      i.id_size_ind = is_null ? SQL_NULL_DATA : 0;
-    }
-
     // race
     //
     {
@@ -6973,7 +7140,7 @@ namespace odb
 
         mssql::value_traits<
             obj_traits::id_type,
-            mssql::id_int >::set_image (
+            mssql::id_bigint >::set_image (
           i.race_value, is_null, id);
         i.race_size_ind = is_null ? SQL_NULL_DATA : 0;
       }
@@ -6998,7 +7165,7 @@ namespace odb
 
         mssql::value_traits<
             obj_traits::id_type,
-            mssql::id_int >::set_image (
+            mssql::id_bigint >::set_image (
           i.bus_value, is_null, id);
         i.bus_size_ind = is_null ? SQL_NULL_DATA : 0;
       }
@@ -7051,12 +7218,12 @@ namespace odb
     // id
     //
     {
-      ::quint32& v =
+      long unsigned int& v =
         o.id;
 
       mssql::value_traits<
-          ::quint32,
-          mssql::id_int >::set_value (
+          long unsigned int,
+          mssql::id_bigint >::set_value (
         v,
         i.id_value,
         i.id_size_ind == SQL_NULL_DATA);
@@ -7078,7 +7245,7 @@ namespace odb
         obj_traits::id_type id;
         mssql::value_traits<
             obj_traits::id_type,
-            mssql::id_int >::set_value (
+            mssql::id_bigint >::set_value (
           id,
           i.race_value,
           i.race_size_ind == SQL_NULL_DATA);
@@ -7109,7 +7276,7 @@ namespace odb
         obj_traits::id_type id;
         mssql::value_traits<
             obj_traits::id_type,
-            mssql::id_int >::set_value (
+            mssql::id_bigint >::set_value (
           id,
           i.bus_value,
           i.bus_size_ind == SQL_NULL_DATA);
@@ -7159,8 +7326,8 @@ namespace odb
     {
       bool is_null (false);
       mssql::value_traits<
-          ::quint32,
-          mssql::id_int >::set_image (
+          long unsigned int,
+          mssql::id_bigint >::set_image (
         i.id_value, is_null, id);
       i.id_size_ind = is_null ? SQL_NULL_DATA : 0;
     }
@@ -7168,13 +7335,13 @@ namespace odb
 
   const char access::object_traits_impl< ::DBScheduledRace, id_mssql >::persist_statement[] =
   "INSERT INTO [DBScheduledRace] "
-  "([id], "
-  "[race], "
+  "([race], "
   "[bus], "
   "[departure_time], "
   "[arrival_time]) "
+  "OUTPUT INSERTED.[id] "
   "VALUES "
-  "(?, ?, ?, ?, ?)";
+  "(?, ?, ?, ?)";
 
   const char access::object_traits_impl< ::DBScheduledRace, id_mssql >::find_statement[] =
   "SELECT "
@@ -7217,7 +7384,7 @@ namespace odb
   "[DBScheduledRace]";
 
   void access::object_traits_impl< ::DBScheduledRace, id_mssql >::
-  persist (database& db, const object_type& obj)
+  persist (database& db, object_type& obj)
   {
     ODB_POTENTIALLY_UNUSED (db);
 
@@ -7229,7 +7396,7 @@ namespace odb
       conn.statement_cache ().find_object<object_type> ());
 
     callback (db,
-              obj,
+              static_cast<const object_type&> (obj),
               callback_event::pre_persist);
 
     image_type& im (sts.image ());
@@ -7245,12 +7412,25 @@ namespace odb
       imb.version++;
     }
 
+    {
+      id_image_type& i (sts.id_image ());
+      binding& b (sts.id_image_binding ());
+      if (i.version != sts.id_image_version () || b.version == 0)
+      {
+        bind (b.bind, i);
+        sts.id_image_version (i.version);
+        b.version++;
+      }
+    }
+
     insert_statement& st (sts.persist_statement ());
     if (!st.execute ())
       throw object_already_persistent ();
 
+    obj.id = id (sts.id_image ());
+
     callback (db,
-              obj,
+              static_cast<const object_type&> (obj),
               callback_event::post_persist);
   }
 

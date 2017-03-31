@@ -3,7 +3,6 @@
 
 #include <QtCore/QString>
 #include <QtCore/QByteArray>
-#include <QtCore/QUuid>
 #include <QtCore/QDateTime>
 #include <QtCore/QSharedPointer>
 #include <QtCore/QList>
@@ -21,8 +20,8 @@ class DBBusTypeInfo
 {
 private:
 	friend class odb::access;
-#pragma db id 
-    quint32                     id;
+#pragma db id auto
+    unsigned long                       id;
 	QString                     brand;
 	QString                     model;
 	quint32                     fuel_consumption;
@@ -59,8 +58,8 @@ class DBBusState
 {
 private:
 	friend class odb::access;
-#pragma db id 
-    quint32                         id;
+#pragma db id auto
+    unsigned long                           id;
 	quint32                         durability;
 	QDate                           last_technical_inspection_date;
 	QDate                           next_technical_inspection_date;
@@ -69,6 +68,7 @@ private:
 public:
 	DBBusState(quint32 durabitity_, const QDate& last_tech_date, const QDate& next_tech_date, bool is_available_)
 	{
+
 		durability = durabitity_;
 		last_technical_inspection_date = last_tech_date;
 		next_technical_inspection_date = next_tech_date;
@@ -98,8 +98,8 @@ class DBBus
 {
 private:
 	friend class odb::access;
-#pragma db id
-    quint32							  id;
+#pragma db id auto
+    unsigned long							  id;
 #pragma db not_null
 	QSharedPointer<DBBusTypeInfo>     info;
 #pragma db not_null
@@ -112,6 +112,7 @@ private:
 public:
 	DBBus(QSharedPointer<DBBusTypeInfo> info_, QSharedPointer<DBBusState> state_, const QDate& purchase_date_)
 	{
+
 		info = info_;
 		state = state_;
 		purchase_date = purchase_date_;
@@ -135,8 +136,8 @@ class DBCity
 {
 private:
 	friend class odb::access;
-#pragma db id
-    quint32                     id;
+#pragma db id auto
+    unsigned long                       id;
 	QString                     name;
 	quint32                     population;
     float                     location_x;
@@ -145,6 +146,7 @@ private:
 public:
     DBCity(const QString& name_, quint32 population_, float location_x_, float location_y_)
 	{
+
 		name = name_;
 		population = population_;
 		location_x = location_x_;
@@ -173,8 +175,8 @@ class DBPath
 {
 private:
 	friend class odb::access;
-#pragma db id
-    quint32                             id;
+#pragma db id auto
+    unsigned long                               id;
 	QVector<QSharedPointer<DBCity>>     cities;
 
 	qint32                              quality_level;
@@ -185,6 +187,7 @@ private:
 public:
 	DBPath(QVector<QSharedPointer<DBCity>> cities_, quint32 quality_, double milage_)
 	{
+
 		cities = cities_;
 		quality_level = quality_;
 		milage = milage_;
@@ -208,8 +211,8 @@ class DBRaceStatistics
 {
 private:
 	friend class odb::access;
-#pragma db id
-    quint32						id;
+#pragma db id auto
+    unsigned long						id;
 	quint32                     abs_popularity;             // abs_popularity +=
 	quint32                     derivative_popularity;      // += derivative_popularity * dt
 	float                       trust_factor;               // significance of all other values
@@ -220,6 +223,7 @@ private:
 public:
 	DBRaceStatistics(quint32 abs_popularity_, quint32 derivate_popularity_, float trust_factor_)
 	{
+
 		abs_popularity = abs_popularity_;
 		derivative_popularity = derivate_popularity_;
 		trust_factor = trust_factor_;
@@ -243,8 +247,8 @@ class DBRouteStatistics
 {
 private:
 	friend class odb::access;
-#pragma db id
-    quint32				id;
+#pragma db id auto
+    unsigned long				id;
 	float               quality_factor;       // statistical modeling factor
 	quint32             square_coverage;      // a sum of all cities square       (TOBE reworked)
 	quint32             population_coverage;  // a sum of all cities population   (TOBE reworked)
@@ -252,6 +256,7 @@ private:
 public:
 	DBRouteStatistics(float quality_factor_, quint32 square_coverage_, quint32 population_coverage_) 
 	{
+
 		quality_factor = quality_factor_;
 		square_coverage = square_coverage_;
 		population_coverage = population_coverage_;
@@ -275,8 +280,8 @@ class DBRoute
 {
 private:
 	friend class odb::access;
-#pragma db id 
-    quint32									id;
+#pragma db id auto
+    unsigned long									id;
 	QSharedPointer<DBPath>                  path;
 	QSharedPointer<DBRouteStatistics>       statistics;
 
@@ -286,6 +291,7 @@ private:
 public:
 	DBRoute(QSharedPointer<DBPath> path_, QSharedPointer<DBRouteStatistics> statistics_, double milage_) 
 	{
+
 		path = path_;
 		statistics = statistics_;
 		milage = milage_;
@@ -309,8 +315,8 @@ class DBRace
 {
 private:
 	friend class odb::access;
-#pragma db id
-    quint32									  id;
+#pragma db id auto
+    unsigned long									  id;
 	QSharedPointer<DBRoute>                   route;
 	QSharedPointer<DBBusTypeInfo>             bus_type_info;
 	QSharedPointer<DBRaceStatistics>          statistics;
@@ -326,6 +332,7 @@ public:
 	DBRace(QSharedPointer<DBRoute> route_, QSharedPointer<DBBusTypeInfo> bus_, QSharedPointer<DBRaceStatistics> statistics_, const QTime& duration_,
 		quint32 exp_grivnas, quint32 exp_coins, quint32 ticket_price_grivnas_, quint32 ticket_price_coins_)
 	{
+
 		route = route_;
 		bus_type_info = bus_;
 		statistics = statistics_;
@@ -343,8 +350,8 @@ class DBScheduledRace
 {
 private:
 	friend class odb::access;
-#pragma db id
-    quint32						  id;
+#pragma db id auto
+    unsigned long						  id;
 	QSharedPointer<DBRace>        race;
 	QSharedPointer<DBBus>         bus;
 
@@ -355,6 +362,7 @@ private:
 public:
 	DBScheduledRace(QSharedPointer<DBRace> race_, QSharedPointer<DBBus> bus_, const QTime& departure_time_, const QTime& arrival_time_)
 	{
+
 		race = race_;
 		bus = bus_;
 		departure_time = departure_time_;

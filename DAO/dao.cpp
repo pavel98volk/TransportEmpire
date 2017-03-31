@@ -55,6 +55,5 @@ QVector<QSharedPointer<City>> dao::DownloadAllCities(int& argc, char* argv[])
     catch (const odb::exception& e)
     {
         cerr << e.what() << endl;
-        return QVector<QSharedPointer<City>>{};
     }
 }

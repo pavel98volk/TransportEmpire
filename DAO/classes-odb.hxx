@@ -77,9 +77,9 @@ namespace odb
 
     static const bool polymorphic = false;
 
-    typedef ::quint32 id_type;
+    typedef long unsigned int id_type;
 
-    static const bool auto_id = false;
+    static const bool auto_id = true;
 
     static const bool abstract = false;
 
@@ -123,9 +123,9 @@ namespace odb
 
     static const bool polymorphic = false;
 
-    typedef ::quint32 id_type;
+    typedef long unsigned int id_type;
 
-    static const bool auto_id = false;
+    static const bool auto_id = true;
 
     static const bool abstract = false;
 
@@ -169,9 +169,9 @@ namespace odb
 
     static const bool polymorphic = false;
 
-    typedef ::quint32 id_type;
+    typedef long unsigned int id_type;
 
-    static const bool auto_id = false;
+    static const bool auto_id = true;
 
     static const bool abstract = false;
 
@@ -215,9 +215,9 @@ namespace odb
 
     static const bool polymorphic = false;
 
-    typedef ::quint32 id_type;
+    typedef long unsigned int id_type;
 
-    static const bool auto_id = false;
+    static const bool auto_id = true;
 
     static const bool abstract = false;
 
@@ -261,9 +261,9 @@ namespace odb
 
     static const bool polymorphic = false;
 
-    typedef ::quint32 id_type;
+    typedef long unsigned int id_type;
 
-    static const bool auto_id = false;
+    static const bool auto_id = true;
 
     static const bool abstract = false;
 
@@ -307,9 +307,9 @@ namespace odb
 
     static const bool polymorphic = false;
 
-    typedef ::quint32 id_type;
+    typedef long unsigned int id_type;
 
-    static const bool auto_id = false;
+    static const bool auto_id = true;
 
     static const bool abstract = false;
 
@@ -353,9 +353,9 @@ namespace odb
 
     static const bool polymorphic = false;
 
-    typedef ::quint32 id_type;
+    typedef long unsigned int id_type;
 
-    static const bool auto_id = false;
+    static const bool auto_id = true;
 
     static const bool abstract = false;
 
@@ -399,9 +399,9 @@ namespace odb
 
     static const bool polymorphic = false;
 
-    typedef ::quint32 id_type;
+    typedef long unsigned int id_type;
 
-    static const bool auto_id = false;
+    static const bool auto_id = true;
 
     static const bool abstract = false;
 
@@ -445,9 +445,9 @@ namespace odb
 
     static const bool polymorphic = false;
 
-    typedef ::quint32 id_type;
+    typedef long unsigned int id_type;
 
-    static const bool auto_id = false;
+    static const bool auto_id = true;
 
     static const bool abstract = false;
 
@@ -491,9 +491,9 @@ namespace odb
 
     static const bool polymorphic = false;
 
-    typedef ::quint32 id_type;
+    typedef long unsigned int id_type;
 
-    static const bool auto_id = false;
+    static const bool auto_id = true;
 
     static const bool abstract = false;
 
@@ -540,9 +540,9 @@ namespace odb
     typedef
     mssql::query_column<
       mssql::value_traits<
-        ::quint32,
-        mssql::id_int >::query_type,
-      mssql::id_int >
+        long unsigned int,
+        mssql::id_bigint >::query_type,
+      mssql::id_bigint >
     id_type_;
 
     static const id_type_ id;
@@ -638,7 +638,7 @@ namespace odb
 
     struct id_image_type
     {
-      int id_value;
+      long long id_value;
       SQLLEN id_size_ind;
 
       std::size_t version;
@@ -648,7 +648,7 @@ namespace odb
     {
       // id
       //
-      int id_value;
+      long long id_value;
       SQLLEN id_size_ind;
 
       // brand
@@ -685,6 +685,9 @@ namespace odb
     struct extra_statement_cache_type;
 
     using object_traits<object_type>::id;
+
+    static id_type
+    id (const id_image_type&);
 
     static id_type
     id (const image_type&);
@@ -735,7 +738,7 @@ namespace odb
     static const char table_name[];
 
     static void
-    persist (database&, const object_type&);
+    persist (database&, object_type&);
 
     static pointer_type
     find (database&, const id_type&);
@@ -788,9 +791,9 @@ namespace odb
     typedef
     mssql::query_column<
       mssql::value_traits<
-        ::quint32,
-        mssql::id_int >::query_type,
-      mssql::id_int >
+        long unsigned int,
+        mssql::id_bigint >::query_type,
+      mssql::id_bigint >
     id_type_;
 
     static const id_type_ id;
@@ -886,7 +889,7 @@ namespace odb
 
     struct id_image_type
     {
-      int id_value;
+      long long id_value;
       SQLLEN id_size_ind;
 
       std::size_t version;
@@ -896,7 +899,7 @@ namespace odb
     {
       // id
       //
-      int id_value;
+      long long id_value;
       SQLLEN id_size_ind;
 
       // durability
@@ -933,6 +936,9 @@ namespace odb
     struct extra_statement_cache_type;
 
     using object_traits<object_type>::id;
+
+    static id_type
+    id (const id_image_type&);
 
     static id_type
     id (const image_type&);
@@ -983,7 +989,7 @@ namespace odb
     static const char table_name[];
 
     static void
-    persist (database&, const object_type&);
+    persist (database&, object_type&);
 
     static pointer_type
     find (database&, const id_type&);
@@ -1036,9 +1042,9 @@ namespace odb
     typedef
     mssql::query_column<
       mssql::value_traits<
-        ::quint32,
-        mssql::id_int >::query_type,
-      mssql::id_int >
+        long unsigned int,
+        mssql::id_bigint >::query_type,
+      mssql::id_bigint >
     id_type_;
 
     static const id_type_ id;
@@ -1048,9 +1054,9 @@ namespace odb
     typedef
     mssql::query_column<
       mssql::value_traits<
-        ::quint32,
-        mssql::id_int >::query_type,
-      mssql::id_int >
+        long unsigned int,
+        mssql::id_bigint >::query_type,
+      mssql::id_bigint >
     info_type_;
 
     static const info_type_ info;
@@ -1060,9 +1066,9 @@ namespace odb
     typedef
     mssql::query_column<
       mssql::value_traits<
-        ::quint32,
-        mssql::id_int >::query_type,
-      mssql::id_int >
+        long unsigned int,
+        mssql::id_bigint >::query_type,
+      mssql::id_bigint >
     state_type_;
 
     static const state_type_ state;
@@ -1111,7 +1117,7 @@ namespace odb
 
     struct id_image_type
     {
-      int id_value;
+      long long id_value;
       SQLLEN id_size_ind;
 
       std::size_t version;
@@ -1121,17 +1127,17 @@ namespace odb
     {
       // id
       //
-      int id_value;
+      long long id_value;
       SQLLEN id_size_ind;
 
       // info
       //
-      int info_value;
+      long long info_value;
       SQLLEN info_size_ind;
 
       // state
       //
-      int state_value;
+      long long state_value;
       SQLLEN state_size_ind;
 
       // purchase_date
@@ -1156,6 +1162,9 @@ namespace odb
     struct state_tag;
 
     using object_traits<object_type>::id;
+
+    static id_type
+    id (const id_image_type&);
 
     static id_type
     id (const image_type&);
@@ -1206,7 +1215,7 @@ namespace odb
     static const char table_name[];
 
     static void
-    persist (database&, const object_type&);
+    persist (database&, object_type&);
 
     static pointer_type
     find (database&, const id_type&);
@@ -1259,9 +1268,9 @@ namespace odb
     typedef
     mssql::query_column<
       mssql::value_traits<
-        ::quint32,
-        mssql::id_int >::query_type,
-      mssql::id_int >
+        long unsigned int,
+        mssql::id_bigint >::query_type,
+      mssql::id_bigint >
     id_type_;
 
     static const id_type_ id;
@@ -1357,7 +1366,7 @@ namespace odb
 
     struct id_image_type
     {
-      int id_value;
+      long long id_value;
       SQLLEN id_size_ind;
 
       std::size_t version;
@@ -1367,7 +1376,7 @@ namespace odb
     {
       // id
       //
-      int id_value;
+      long long id_value;
       SQLLEN id_size_ind;
 
       // name
@@ -1404,6 +1413,9 @@ namespace odb
     struct extra_statement_cache_type;
 
     using object_traits<object_type>::id;
+
+    static id_type
+    id (const id_image_type&);
 
     static id_type
     id (const image_type&);
@@ -1454,7 +1466,7 @@ namespace odb
     static const char table_name[];
 
     static void
-    persist (database&, const object_type&);
+    persist (database&, object_type&);
 
     static pointer_type
     find (database&, const id_type&);
@@ -1507,9 +1519,9 @@ namespace odb
     typedef
     mssql::query_column<
       mssql::value_traits<
-        ::quint32,
-        mssql::id_int >::query_type,
-      mssql::id_int >
+        long unsigned int,
+        mssql::id_bigint >::query_type,
+      mssql::id_bigint >
     id_type_;
 
     static const id_type_ id;
@@ -1571,7 +1583,7 @@ namespace odb
 
     struct id_image_type
     {
-      int id_value;
+      long long id_value;
       SQLLEN id_size_ind;
 
       std::size_t version;
@@ -1581,7 +1593,7 @@ namespace odb
     {
       // id
       //
-      int id_value;
+      long long id_value;
       SQLLEN id_size_ind;
 
       // quality_level
@@ -1639,7 +1651,7 @@ namespace odb
 
         // value
         //
-        int value_value;
+        long long value_value;
         SQLLEN value_size_ind;
 
         std::size_t version;
@@ -1690,6 +1702,9 @@ namespace odb
     using object_traits<object_type>::id;
 
     static id_type
+    id (const id_image_type&);
+
+    static id_type
     id (const image_type&);
 
     static void
@@ -1738,7 +1753,7 @@ namespace odb
     static const char table_name[];
 
     static void
-    persist (database&, const object_type&);
+    persist (database&, object_type&);
 
     static pointer_type
     find (database&, const id_type&);
@@ -1791,9 +1806,9 @@ namespace odb
     typedef
     mssql::query_column<
       mssql::value_traits<
-        ::quint32,
-        mssql::id_int >::query_type,
-      mssql::id_int >
+        long unsigned int,
+        mssql::id_bigint >::query_type,
+      mssql::id_bigint >
     id_type_;
 
     static const id_type_ id;
@@ -1872,7 +1887,7 @@ namespace odb
 
     struct id_image_type
     {
-      int id_value;
+      long long id_value;
       SQLLEN id_size_ind;
 
       std::size_t version;
@@ -1882,7 +1897,7 @@ namespace odb
     {
       // id
       //
-      int id_value;
+      long long id_value;
       SQLLEN id_size_ind;
 
       // abs_popularity
@@ -1914,6 +1929,9 @@ namespace odb
     struct extra_statement_cache_type;
 
     using object_traits<object_type>::id;
+
+    static id_type
+    id (const id_image_type&);
 
     static id_type
     id (const image_type&);
@@ -1964,7 +1982,7 @@ namespace odb
     static const char table_name[];
 
     static void
-    persist (database&, const object_type&);
+    persist (database&, object_type&);
 
     static pointer_type
     find (database&, const id_type&);
@@ -2017,9 +2035,9 @@ namespace odb
     typedef
     mssql::query_column<
       mssql::value_traits<
-        ::quint32,
-        mssql::id_int >::query_type,
-      mssql::id_int >
+        long unsigned int,
+        mssql::id_bigint >::query_type,
+      mssql::id_bigint >
     id_type_;
 
     static const id_type_ id;
@@ -2098,7 +2116,7 @@ namespace odb
 
     struct id_image_type
     {
-      int id_value;
+      long long id_value;
       SQLLEN id_size_ind;
 
       std::size_t version;
@@ -2108,7 +2126,7 @@ namespace odb
     {
       // id
       //
-      int id_value;
+      long long id_value;
       SQLLEN id_size_ind;
 
       // quality_factor
@@ -2140,6 +2158,9 @@ namespace odb
     struct extra_statement_cache_type;
 
     using object_traits<object_type>::id;
+
+    static id_type
+    id (const id_image_type&);
 
     static id_type
     id (const image_type&);
@@ -2190,7 +2211,7 @@ namespace odb
     static const char table_name[];
 
     static void
-    persist (database&, const object_type&);
+    persist (database&, object_type&);
 
     static pointer_type
     find (database&, const id_type&);
@@ -2243,9 +2264,9 @@ namespace odb
     typedef
     mssql::query_column<
       mssql::value_traits<
-        ::quint32,
-        mssql::id_int >::query_type,
-      mssql::id_int >
+        long unsigned int,
+        mssql::id_bigint >::query_type,
+      mssql::id_bigint >
     id_type_;
 
     static const id_type_ id;
@@ -2255,9 +2276,9 @@ namespace odb
     typedef
     mssql::query_column<
       mssql::value_traits<
-        ::quint32,
-        mssql::id_int >::query_type,
-      mssql::id_int >
+        long unsigned int,
+        mssql::id_bigint >::query_type,
+      mssql::id_bigint >
     path_type_;
 
     static const path_type_ path;
@@ -2267,9 +2288,9 @@ namespace odb
     typedef
     mssql::query_column<
       mssql::value_traits<
-        ::quint32,
-        mssql::id_int >::query_type,
-      mssql::id_int >
+        long unsigned int,
+        mssql::id_bigint >::query_type,
+      mssql::id_bigint >
     statistics_type_;
 
     static const statistics_type_ statistics;
@@ -2318,7 +2339,7 @@ namespace odb
 
     struct id_image_type
     {
-      int id_value;
+      long long id_value;
       SQLLEN id_size_ind;
 
       std::size_t version;
@@ -2328,17 +2349,17 @@ namespace odb
     {
       // id
       //
-      int id_value;
+      long long id_value;
       SQLLEN id_size_ind;
 
       // path
       //
-      int path_value;
+      long long path_value;
       SQLLEN path_size_ind;
 
       // statistics
       //
-      int statistics_value;
+      long long statistics_value;
       SQLLEN statistics_size_ind;
 
       // milage
@@ -2363,6 +2384,9 @@ namespace odb
     struct statistics_tag;
 
     using object_traits<object_type>::id;
+
+    static id_type
+    id (const id_image_type&);
 
     static id_type
     id (const image_type&);
@@ -2413,7 +2437,7 @@ namespace odb
     static const char table_name[];
 
     static void
-    persist (database&, const object_type&);
+    persist (database&, object_type&);
 
     static pointer_type
     find (database&, const id_type&);
@@ -2466,9 +2490,9 @@ namespace odb
     typedef
     mssql::query_column<
       mssql::value_traits<
-        ::quint32,
-        mssql::id_int >::query_type,
-      mssql::id_int >
+        long unsigned int,
+        mssql::id_bigint >::query_type,
+      mssql::id_bigint >
     id_type_;
 
     static const id_type_ id;
@@ -2478,9 +2502,9 @@ namespace odb
     typedef
     mssql::query_column<
       mssql::value_traits<
-        ::quint32,
-        mssql::id_int >::query_type,
-      mssql::id_int >
+        long unsigned int,
+        mssql::id_bigint >::query_type,
+      mssql::id_bigint >
     route_type_;
 
     static const route_type_ route;
@@ -2490,9 +2514,9 @@ namespace odb
     typedef
     mssql::query_column<
       mssql::value_traits<
-        ::quint32,
-        mssql::id_int >::query_type,
-      mssql::id_int >
+        long unsigned int,
+        mssql::id_bigint >::query_type,
+      mssql::id_bigint >
     bus_type_info_type_;
 
     static const bus_type_info_type_ bus_type_info;
@@ -2502,9 +2526,9 @@ namespace odb
     typedef
     mssql::query_column<
       mssql::value_traits<
-        ::quint32,
-        mssql::id_int >::query_type,
-      mssql::id_int >
+        long unsigned int,
+        mssql::id_bigint >::query_type,
+      mssql::id_bigint >
     statistics_type_;
 
     static const statistics_type_ statistics;
@@ -2626,7 +2650,7 @@ namespace odb
 
     struct id_image_type
     {
-      int id_value;
+      long long id_value;
       SQLLEN id_size_ind;
 
       std::size_t version;
@@ -2636,22 +2660,22 @@ namespace odb
     {
       // id
       //
-      int id_value;
+      long long id_value;
       SQLLEN id_size_ind;
 
       // route
       //
-      int route_value;
+      long long route_value;
       SQLLEN route_size_ind;
 
       // bus_type_info
       //
-      int bus_type_info_value;
+      long long bus_type_info_value;
       SQLLEN bus_type_info_size_ind;
 
       // statistics
       //
-      int statistics_value;
+      long long statistics_value;
       SQLLEN statistics_size_ind;
 
       // duration
@@ -2697,6 +2721,9 @@ namespace odb
     struct statistics_tag;
 
     using object_traits<object_type>::id;
+
+    static id_type
+    id (const id_image_type&);
 
     static id_type
     id (const image_type&);
@@ -2747,7 +2774,7 @@ namespace odb
     static const char table_name[];
 
     static void
-    persist (database&, const object_type&);
+    persist (database&, object_type&);
 
     static pointer_type
     find (database&, const id_type&);
@@ -2800,9 +2827,9 @@ namespace odb
     typedef
     mssql::query_column<
       mssql::value_traits<
-        ::quint32,
-        mssql::id_int >::query_type,
-      mssql::id_int >
+        long unsigned int,
+        mssql::id_bigint >::query_type,
+      mssql::id_bigint >
     id_type_;
 
     static const id_type_ id;
@@ -2812,9 +2839,9 @@ namespace odb
     typedef
     mssql::query_column<
       mssql::value_traits<
-        ::quint32,
-        mssql::id_int >::query_type,
-      mssql::id_int >
+        long unsigned int,
+        mssql::id_bigint >::query_type,
+      mssql::id_bigint >
     race_type_;
 
     static const race_type_ race;
@@ -2824,9 +2851,9 @@ namespace odb
     typedef
     mssql::query_column<
       mssql::value_traits<
-        ::quint32,
-        mssql::id_int >::query_type,
-      mssql::id_int >
+        long unsigned int,
+        mssql::id_bigint >::query_type,
+      mssql::id_bigint >
     bus_type_;
 
     static const bus_type_ bus;
@@ -2892,7 +2919,7 @@ namespace odb
 
     struct id_image_type
     {
-      int id_value;
+      long long id_value;
       SQLLEN id_size_ind;
 
       std::size_t version;
@@ -2902,17 +2929,17 @@ namespace odb
     {
       // id
       //
-      int id_value;
+      long long id_value;
       SQLLEN id_size_ind;
 
       // race
       //
-      int race_value;
+      long long race_value;
       SQLLEN race_size_ind;
 
       // bus
       //
-      int bus_value;
+      long long bus_value;
       SQLLEN bus_size_ind;
 
       // departure_time
@@ -2942,6 +2969,9 @@ namespace odb
     struct bus_tag;
 
     using object_traits<object_type>::id;
+
+    static id_type
+    id (const id_image_type&);
 
     static id_type
     id (const image_type&);
@@ -2992,7 +3022,7 @@ namespace odb
     static const char table_name[];
 
     static void
-    persist (database&, const object_type&);
+    persist (database&, object_type&);
 
     static pointer_type
     find (database&, const id_type&);
@@ -3090,9 +3120,9 @@ namespace odb
     typedef
     mssql::query_column<
       mssql::value_traits<
-        ::quint32,
-        mssql::id_int >::query_type,
-      mssql::id_int >
+        long unsigned int,
+        mssql::id_bigint >::query_type,
+      mssql::id_bigint >
     id_type_;
 
     static const id_type_ id;
@@ -3102,9 +3132,9 @@ namespace odb
     typedef
     mssql::query_column<
       mssql::value_traits<
-        ::quint32,
-        mssql::id_int >::query_type,
-      mssql::id_int >
+        long unsigned int,
+        mssql::id_bigint >::query_type,
+      mssql::id_bigint >
     info_column_type_;
 
     typedef
@@ -3134,9 +3164,9 @@ namespace odb
     typedef
     mssql::query_column<
       mssql::value_traits<
-        ::quint32,
-        mssql::id_int >::query_type,
-      mssql::id_int >
+        long unsigned int,
+        mssql::id_bigint >::query_type,
+      mssql::id_bigint >
     state_column_type_;
 
     typedef
@@ -3253,9 +3283,9 @@ namespace odb
     typedef
     mssql::query_column<
       mssql::value_traits<
-        ::quint32,
-        mssql::id_int >::query_type,
-      mssql::id_int >
+        long unsigned int,
+        mssql::id_bigint >::query_type,
+      mssql::id_bigint >
     id_type_;
 
     static const id_type_ id;
@@ -3265,9 +3295,9 @@ namespace odb
     typedef
     mssql::query_column<
       mssql::value_traits<
-        ::quint32,
-        mssql::id_int >::query_type,
-      mssql::id_int >
+        long unsigned int,
+        mssql::id_bigint >::query_type,
+      mssql::id_bigint >
     path_column_type_;
 
     typedef
@@ -3297,9 +3327,9 @@ namespace odb
     typedef
     mssql::query_column<
       mssql::value_traits<
-        ::quint32,
-        mssql::id_int >::query_type,
-      mssql::id_int >
+        long unsigned int,
+        mssql::id_bigint >::query_type,
+      mssql::id_bigint >
     statistics_column_type_;
 
     typedef
@@ -3426,9 +3456,9 @@ namespace odb
     typedef
     mssql::query_column<
       mssql::value_traits<
-        ::quint32,
-        mssql::id_int >::query_type,
-      mssql::id_int >
+        long unsigned int,
+        mssql::id_bigint >::query_type,
+      mssql::id_bigint >
     id_type_;
 
     static const id_type_ id;
@@ -3438,9 +3468,9 @@ namespace odb
     typedef
     mssql::query_column<
       mssql::value_traits<
-        ::quint32,
-        mssql::id_int >::query_type,
-      mssql::id_int >
+        long unsigned int,
+        mssql::id_bigint >::query_type,
+      mssql::id_bigint >
     route_column_type_;
 
     typedef
@@ -3470,9 +3500,9 @@ namespace odb
     typedef
     mssql::query_column<
       mssql::value_traits<
-        ::quint32,
-        mssql::id_int >::query_type,
-      mssql::id_int >
+        long unsigned int,
+        mssql::id_bigint >::query_type,
+      mssql::id_bigint >
     bus_type_info_column_type_;
 
     typedef
@@ -3502,9 +3532,9 @@ namespace odb
     typedef
     mssql::query_column<
       mssql::value_traits<
-        ::quint32,
-        mssql::id_int >::query_type,
-      mssql::id_int >
+        long unsigned int,
+        mssql::id_bigint >::query_type,
+      mssql::id_bigint >
     statistics_column_type_;
 
     typedef
@@ -3686,9 +3716,9 @@ namespace odb
     typedef
     mssql::query_column<
       mssql::value_traits<
-        ::quint32,
-        mssql::id_int >::query_type,
-      mssql::id_int >
+        long unsigned int,
+        mssql::id_bigint >::query_type,
+      mssql::id_bigint >
     id_type_;
 
     static const id_type_ id;
@@ -3698,9 +3728,9 @@ namespace odb
     typedef
     mssql::query_column<
       mssql::value_traits<
-        ::quint32,
-        mssql::id_int >::query_type,
-      mssql::id_int >
+        long unsigned int,
+        mssql::id_bigint >::query_type,
+      mssql::id_bigint >
     race_column_type_;
 
     typedef
@@ -3730,9 +3760,9 @@ namespace odb
     typedef
     mssql::query_column<
       mssql::value_traits<
-        ::quint32,
-        mssql::id_int >::query_type,
-      mssql::id_int >
+        long unsigned int,
+        mssql::id_bigint >::query_type,
+      mssql::id_bigint >
     bus_column_type_;
 
     typedef

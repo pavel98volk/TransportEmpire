@@ -2,6 +2,7 @@ QT += core websockets
 QT -= gui
 
 CONFIG += c++11
+CONFIG += warn_off
 
 TARGET = TransportEmpire
 CONFIG += console

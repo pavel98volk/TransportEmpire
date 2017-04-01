@@ -1,5 +1,9 @@
 #include "Model/city.h"
 
+City::City(const QJsonObject& json)
+{
+    Read(json);
+}
 
 City::City(QString name_, quint32 population_, QPointF location_)
 {

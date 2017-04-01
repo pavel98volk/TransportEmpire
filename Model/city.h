@@ -19,8 +19,9 @@ private:
 
 public:
     City() = default;
+    City(const QJsonObject &json);
     City(QString name_, quint32 population_, QPointF location_);
-  
+
 public:
     QString getName();
     quint32 getPopulation();
@@ -31,5 +32,6 @@ public:
     void Debug() {
         qDebug() << location.x() << location.y() << name << endl;
     }
- 
+
+
 };

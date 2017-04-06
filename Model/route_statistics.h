@@ -10,5 +10,9 @@ private:
     quint32             population_coverage;  // a sum of all cities population   (TOBE reworked)
 
 public:
-    RouteStatistics();
+    RouteStatistics()=default;
+    RouteStatistics(float quality_factor_, quint32 square_coverage_, quint32 population_coverage_);
+    float getQuality();
+    quint32 getSquareCoverage();
+    quint32 getPopulationCoverage();
 };

@@ -8,4 +8,6 @@ class TestDAO : public QTestSuite
     Q_OBJECT
 private slots:
     void Test1();
+    void Test2();
+    void Test3();
 };

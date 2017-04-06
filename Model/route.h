@@ -14,6 +14,10 @@ private:
     double                                  milage;         // whole distance which route takes
 
 public:
-    Route();
+    Route()=default;
+    Route(QSharedPointer<Path> path_, QSharedPointer<RouteStatistics> statistics_, double milage_);
+    QSharedPointer<Path> getPath();
+    QSharedPointer<RouteStatistics> getStatistics();
+    double getMilage();
 };
 

@@ -26,7 +26,7 @@ public:
     QString getName();
     quint32 getPopulation();
     QPointF getLocation();
-    
+
 public:
     void Read(const QJsonObject& json);
     void Debug() {

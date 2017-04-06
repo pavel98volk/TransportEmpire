@@ -1,7 +1,7 @@
 #include "dao_test.h"
+#include "DAO/dao.h"
 
 #include <QDebug>
-#include "DAO/dao.h"
 
 // Just an example
 void TestDAO::Test1()

@@ -1,5 +1,8 @@
 #include <QCoreApplication>
+#include <QScopedPointer>
 #include <QDebug>
+
+#include "Test/test_suite.h"
 
 #include "Model/bus.h"
 #include "Model/city.h"
@@ -22,52 +25,13 @@ int main(int argc, char *argv[])
 {
     QCoreApplication a(argc, argv);
 
-    // Model compilation test
-    Bus bus;
-    City city;
-    Race race;
-    Route route;
-    BusTypeInfo bus_type_info;
-    ScheduledRace scheduled_race;
-    RaceStatistics race_statistics;
-    RouteStatistics route_statistics;
+    // Runs all unit tests instantiated as QTestSuite
+    QTestSuite::RunAllTests();
 
-    // DAO compilation test
-    QString name = "Pol";
-    quint32 population = 12;
-    QPoint location;
-    location.setX(1);
-    location.setY(2);
-    QSharedPointer<City> firstCity(new City(name,population,location));
-
-    dao db;
-    db.UploadCity(firstCity, argc, argv);
-
-    population=8;
-    location.setX(3);
-    location.setY(45);
-    name="London";
-    QSharedPointer<City> secondCity(new City(name,population,location));
-
-    db.UploadCity(secondCity,argc,argv);
-
-    QVector<QSharedPointer<City>> allCities = db.DownloadAllCities(argc,argv);
-    for (int i=0;i<allCities.size();i++)
-    {
-        qDebug() << allCities[i]->getName().toLocal8Bit().constData()
-                 << allCities[i]->getPopulation()
-                 << allCities[i]->getLocation().x()
-                 << allCities[i]->getLocation().y()
-                 << endl;
-    }
-
-    // WebServer compilation test
-    WebServer *webServer = new WebServer;	// create web server instace
-        QObject::connect(webServer, &WebServer::closed,
+    QScopedPointer<WebServer> webServer{ new WebServer };
+        QObject::connect(webServer.data(), &WebServer::closed,
                          &a, &QCoreApplication::quit);
         webServer->open(8080);
 
-    int result = a.exec();
-    delete webServer;
-    return result;
+    return a.exec();
 }

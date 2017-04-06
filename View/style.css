@@ -1,0 +1,17 @@
+html, body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+}
+      
+#map {
+    height: 96%;
+	width:60%;
+	margin:10pt;
+}
+
+input.button {
+	position: absolute;
+	top: 50pt;
+	left: 800pt;
+}

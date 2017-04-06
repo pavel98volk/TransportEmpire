@@ -15,7 +15,11 @@ public:
     double                              milage;
 
 public:
-    Path();
+    Path()=default;
+    Path(QVector<QSharedPointer<City>> cities_,qint32 quality_level_, double milage_);
+    QVector<QSharedPointer<City>> getCities();
+    qint32 getQuality();
+    double getMilage();
     void ReadPath(const QJsonArray& jsonArray);
     void Debug(){
        for(auto &x: cities) x->Debug();

@@ -137,6 +137,10 @@ function displayRoute(result, status){
 }
 
 function sendRoad(){
+	var path = [];
+	for (place_id in cities){
+		path.push({address: cities[place_id].address, location: cities[place_id].location});
+	}
 	var socket = new WebSocket("ws://10.1.3.121:1234");
 	var str = JSON.stringify(cities);
 	socket.send(str);

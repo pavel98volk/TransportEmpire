@@ -26,7 +26,7 @@ int main(int argc, char *argv[])
     QCoreApplication a(argc, argv);
 
     // Runs all unit tests instantiated as QTestSuite
-    QTestSuite::RunAllTests();
+    QTestSuite::RunAllTests(argc, argv);
 
     QScopedPointer<WebServer> webServer{ new WebServer };
         QObject::connect(webServer.data(), &WebServer::closed,

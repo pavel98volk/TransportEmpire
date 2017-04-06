@@ -1,5 +1,7 @@
 #include "dao_test.h"
 
+#include <QDebug>
+
 // Just an example
 void TestDAO::Test1()
 {

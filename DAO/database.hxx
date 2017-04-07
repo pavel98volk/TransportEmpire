@@ -26,7 +26,7 @@ inline std::auto_ptr<odb::database> create_database(int& argc, char* argv[])
 
 		exit(0);
 	}
-	auto_ptr<database> db(new odb::mssql::database(argc, argv));
+    auto_ptr<database> db(new odb::mssql::database("", "", "TransportEmpireDB", odb::mssql::protocol_np, "ODB"));
 
 	return db;
 }

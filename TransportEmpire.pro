@@ -53,7 +53,8 @@ HEADERS += \
     DAO/classes.hxx \
     DAO/classes-odb.hxx \
     Test/test_suite.h \
-    Test/dao_test.h
+    Test/dao_test.h \
+    DAO/database.hxx
 
 # Select the database we are going to use.
 #

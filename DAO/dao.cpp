@@ -1,6 +1,6 @@
 #include "DAO/dao.h"
 
-bool dao::UploadCity(QSharedPointer<City> city, int &argc, char* argv[])
+bool dao::UploadCity(QSharedPointer<City> city)
 {
     try
     {
@@ -23,7 +23,7 @@ bool dao::UploadCity(QSharedPointer<City> city, int &argc, char* argv[])
     }
 }
 
-bool dao::UploadBus(QSharedPointer<Bus> bus, int &argc, char* argv[])
+bool dao::UploadBus(QSharedPointer<Bus> bus)
 {
     try
     {
@@ -57,7 +57,7 @@ bool dao::UploadBus(QSharedPointer<Bus> bus, int &argc, char* argv[])
     }
 }
 
-bool dao::UploadRoute(QSharedPointer<Route> route, int &argc, char* argv[])
+bool dao::UploadRoute(QSharedPointer<Route> route)
 {
     try
     {
@@ -99,7 +99,7 @@ bool dao::UploadRoute(QSharedPointer<Route> route, int &argc, char* argv[])
     }
 }
 
-QVector<QSharedPointer<City>> dao::DownloadAllCities(int &argc, char* argv[])
+QVector<QSharedPointer<City>> dao::DownloadAllCities()
 {
     try
     {
@@ -110,11 +110,11 @@ QVector<QSharedPointer<City>> dao::DownloadAllCities(int &argc, char* argv[])
         typedef odb::query<DBCity> query;
         typedef odb::result<DBCity> result;
 
-        result r(db->query<DBCity>(query::population>0));
+        result r(db->query<DBCity>(query::population > 0));
 
         QVector<QSharedPointer<City>> answer;
 
-        for (result::iterator i(r.begin());i!=r.end();i++)
+        for (result::iterator i(r.begin()); i != r.end(); i++)
         {
             QPoint location;
             location.setX(i->getLocationX());
@@ -135,7 +135,7 @@ QVector<QSharedPointer<City>> dao::DownloadAllCities(int &argc, char* argv[])
     }
 }
 
-QVector<QSharedPointer<Bus>> dao::DownloadAllBuses(int &argc, char* argv[])
+QVector<QSharedPointer<Bus>> dao::DownloadAllBuses()
 {
     try
     {
@@ -175,11 +175,11 @@ QVector<QSharedPointer<Bus>> dao::DownloadAllBuses(int &argc, char* argv[])
     }
 }
 
-QVector<QSharedPointer<Route>> dao::DownloadAllRoutes(int &argc, char* argv[])
+QVector<QSharedPointer<Route>> dao::DownloadAllRoutes()
 {
     try
     {
-        auto_ptr<database> db(create_database(argc,argv));
+        auto_ptr<database> db(create_database(argc, argv));
 
         transaction t(db->begin());
 
@@ -195,17 +195,17 @@ QVector<QSharedPointer<Route>> dao::DownloadAllRoutes(int &argc, char* argv[])
             QSharedPointer<DBRouteStatistics> dbRouteStatistics = i->getStatistics();
             QSharedPointer<DBPath> dbPath = i->getPath();
 
-            QSharedPointer<RouteStatistics> routeState(new RouteStatistics(dbRouteStatistics->getQualityFactor(),dbRouteStatistics->getSquareCoverage(),dbRouteStatistics->getPopulationCoverage()));
+            QSharedPointer<RouteStatistics> routeState(new RouteStatistics(dbRouteStatistics->getQualityFactor(), dbRouteStatistics->getSquareCoverage(), dbRouteStatistics->getPopulationCoverage()));
             QVector<QSharedPointer<DBCity>> dbCities = dbPath->getCities();
             QVector<QSharedPointer<City>> cities;
             for (int j=0;j<cities.size();j++)
             {
-                cities[j].reset(new City(dbCities[j]->getName(),dbCities[j]->getPopulation(),QPointF(dbCities[j]->getLocationX(),dbCities[j]->getLocationY())));
+                cities[j].reset(new City(dbCities[j]->getName(), dbCities[j]->getPopulation(),QPointF(dbCities[j]->getLocationX(), dbCities[j]->getLocationY())));
             }
 
-            QSharedPointer<Path> path(new Path(cities,dbPath->getQuality(),dbPath->getMilage()));
+            QSharedPointer<Path> path(new Path(cities, dbPath->getQuality(), dbPath->getMilage()));
 
-            QSharedPointer<Route> current(new Route(path,routeState,i->getMilage()));
+            QSharedPointer<Route> current(new Route(path, routeState, i->getMilage()));
 
             answer.push_back(current);
         }

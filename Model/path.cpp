@@ -1,10 +1,5 @@
 #include "Model/path.h"
 
-void Path::ReadPath(const QJsonArray& jsonArray){
-    for(int i = 0; i < jsonArray.size(); ++i){
-        cities.push_back(QSharedPointer<City>::create(jsonArray[i].toObject()));
-    }
-}
 
 Path::Path(QVector<QSharedPointer<City> > cities_, qint32 quality_level_, double milage_)
 {

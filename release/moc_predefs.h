@@ -6,7 +6,6 @@
 #define _M_X64 100
 #define _WIN64 
 #define _WIN32 
-#define _DEBUG 
 #define _MT 
 #define _DLL 
 #define _CPPRTTI 

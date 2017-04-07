@@ -4,88 +4,96 @@
 #include <QDebug>
 
 // Just an example
-void TestDAO::Test1()
+void TestDAO::CitiesTableTest()
 {
-        QString name = "Pol";
-        quint32 population = 12;
+        dao database{ argc, argv };
+
+        QString name;
+        quint32 population;
         QPoint location;
-        location.setX(1);
-        location.setY(2);
-        QSharedPointer<City> firstCity(new City(name,population,location));
 
-        dao database;
+        name = "Kiev";
+        population = 2804000;
+        location.setX(30);
+        location.setY(50);
 
-        database.UploadCity(firstCity,argc,argv);
+        QSharedPointer<City> kievCity(new City(name, population, location));
 
-        population=8;
+        database.UploadCity(kievCity);
+
+        name = "London";
+        population = 8674000;
         location.setX(3);
         location.setY(45);
-        name="London";
-        QSharedPointer<City> secondCity(new City(name,population,location));
 
-        database.UploadCity(secondCity,argc,argv);
+        QSharedPointer<City> londonCity(new City(name, population, location));
 
-        QVector<QSharedPointer<City>> allCities = database.DownloadAllCities(argc,argv);
+        database.UploadCity(londonCity);
 
-        QCOMPARE(allCities.size(),2);
+        QVector<QSharedPointer<City>> allCities = database.DownloadAllCities();
 
-        for (int i=0;i<allCities.size();i++)
+        QCOMPARE(allCities.size(), 2);
+
+        for (int i = 0; i < allCities.size(); i++)
         {
-             if (i==0)
+             if (i == 0)
              {
-                    QCOMPARE(allCities[i]->getName().toLocal8Bit().constData(),"Pol");
-                    QCOMPARE(allCities[i]->getPopulation(),(unsigned int)12);
-                    QCOMPARE(allCities[i]->getLocation().x(),1.);
-                    QCOMPARE(allCities[i]->getLocation().y(),2.);
+                    QCOMPARE(allCities[i]->getName().toLocal8Bit().constData(), "Kiev");
+                    QCOMPARE(allCities[i]->getPopulation(), (unsigned int) 2804000);
+                    QCOMPARE(allCities[i]->getLocation().x(), 30.0);
+                    QCOMPARE(allCities[i]->getLocation().y(), 50.0);
              }
              else
              {
-                    QCOMPARE(allCities[i]->getName().toLocal8Bit().constData(),"London");
-                    QCOMPARE(allCities[i]->getPopulation(),(unsigned int)8);
-                    QCOMPARE(allCities[i]->getLocation().x(),3.);
-                    QCOMPARE(allCities[i]->getLocation().y(),45.);
+                    QCOMPARE(allCities[i]->getName().toLocal8Bit().constData(), "London");
+                    QCOMPARE(allCities[i]->getPopulation(), (unsigned int) 8674000);
+                    QCOMPARE(allCities[i]->getLocation().x(), 3.0);
+                    QCOMPARE(allCities[i]->getLocation().y(), 45.0);
              }
          }
 }
 
-void TestDAO::Test2()
+void TestDAO::BusesTableTest()
 {
-        dao database;
+        dao database{ argc, argv };
 
-        QSharedPointer<BusState> busState(new BusState((quint32)32,QDate(2016,5,16),QDate(2017,7,12),false));
-        QSharedPointer<BusTypeInfo> busInfo(new BusTypeInfo("Mersedes","Benz",15,12));
-        QSharedPointer<Bus> myBus(new Bus(busInfo,busState,QDate(2017,4,10)));
+        QSharedPointer<BusState> busState(new BusState((quint32) 32, QDate(2016,5,16), QDate(2017,7,12), false));
+        QSharedPointer<BusTypeInfo> busInfo(new BusTypeInfo("Mersedes", "Benz", 15, 12));
+        QSharedPointer<Bus> myBus(new Bus(busInfo, busState, QDate(2017, 4, 10)));
 
-        database.UploadBus(myBus,argc,argv);
+        database.UploadBus(myBus);
 
-        QVector<QSharedPointer<Bus>> allBusses = database.DownloadAllBuses(argc,argv);
+        QVector<QSharedPointer<Bus>> allBusses = database.DownloadAllBuses();
 
         QCOMPARE(allBusses.size(),1);
-        QCOMPARE(allBusses[0]->getState()->getLastInspect(),QDate(2016,5,16));
-        QCOMPARE(allBusses[0]->getState()->getNextInspect(),QDate(2017,7,12));
-        QCOMPARE(allBusses[0]->getState()->getAvailible(),false);
-        QCOMPARE(allBusses[0]->getInfo()->getBrand().toLocal8Bit().constData(),"Mersedes");
-        QCOMPARE(allBusses[0]->getInfo()->getModel().toLocal8Bit().constData(),"Benz");
-        QCOMPARE(allBusses[0]->getPurchaseDate(),QDate(2017,4,10));
+        QCOMPARE(allBusses[0]->getState()->getLastInspect(), QDate(2016, 5, 16));
+        QCOMPARE(allBusses[0]->getState()->getNextInspect(), QDate(2017, 7, 12));
+        QCOMPARE(allBusses[0]->getState()->getAvailible(), false);
+        QCOMPARE(allBusses[0]->getInfo()->getBrand().toLocal8Bit().constData(), "Mersedes");
+        QCOMPARE(allBusses[0]->getInfo()->getModel().toLocal8Bit().constData(), "Benz");
+        QCOMPARE(allBusses[0]->getPurchaseDate(), QDate(2017, 4, 10));
 }
 
-void TestDAO::Test3()
+void TestDAO::RoutesTableTest()
 {
-        dao database;
+        dao database{ argc, argv };
 
-        QSharedPointer<RouteStatistics> routeStat(new RouteStatistics(12.0,4,46));
-        QVector<QSharedPointer<City>> cities(2);
-        cities[0].reset(new City("Berlin",423055,QPoint(2,4)));
-        cities[1].reset(new City("Kyiv",23255,QPoint(8,-3)));
-        QSharedPointer<Path> path(new Path(cities,46,476.4));
-        QSharedPointer<Route> addRoute(new Route(path,routeStat,178.01));
-        database.UploadRoute(addRoute,argc,argv);
+        QSharedPointer<RouteStatistics> routeStat(new RouteStatistics(12.0, 4, 46));
+        QVector<QSharedPointer<City>> cities
+        {
+           QSharedPointer<City>::create("Berlin", 3502000, QPoint(2, 4)),
+           QSharedPointer<City>::create("Tokyo", 13620000, QPoint(8, -3))
+        };
+        QSharedPointer<Path> path(new Path(cities, 46, 476.4));
+        QSharedPointer<Route> addRoute(new Route(path, routeStat, 178.01));
 
-        QVector<QSharedPointer<Route>> allRoutes = database.DownloadAllRoutes(argc,argv);
+        database.UploadRoute(addRoute);
 
-        QCOMPARE(allRoutes.size(),1);
-        QCOMPARE(allRoutes[0]->getMilage(),178.01);
-        QCOMPARE(allRoutes[0]->getPath()->getMilage(),476.4);
+        QVector<QSharedPointer<Route>> allRoutes = database.DownloadAllRoutes();
+
+        QCOMPARE(allRoutes.size(), 1);
+        QCOMPARE(allRoutes[0]->getMilage(), 178.01);
+        QCOMPARE(allRoutes[0]->getPath()->getMilage(), 476.4);
 }
 
 // DAO test suite instatiation

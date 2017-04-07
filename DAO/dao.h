@@ -20,14 +20,24 @@ using namespace odb::core;
 
 class dao
 {
+private:
+    int argc;
+    char** argv;
+
 public:
-    QVector<QSharedPointer<City>>    DownloadAllCities(int &argc, char* argv[]);
-    QVector<QSharedPointer<Route>>   DownloadAllRoutes(int &argc, char* argv[]);
-    QVector<QSharedPointer<Bus>>     DownloadAllBuses(int &argc, char* argv[]);
+    dao(int _argc,  char* _argv[])
+        : argc{ _argc }, argv{ _argv }
+    {
+    }
+
+public:
+    QVector<QSharedPointer<City>>    DownloadAllCities();
+    QVector<QSharedPointer<Route>>   DownloadAllRoutes();
+    QVector<QSharedPointer<Bus>>     DownloadAllBuses();
 
     // return true on success
-    bool UploadCity(QSharedPointer<City> city, int &argc, char* argv[]);
-    bool UploadRoute(QSharedPointer<Route> route, int &argc, char* argv[]);
-    bool UploadBus(QSharedPointer<Bus> bus, int &argc, char* argv[]);
+    bool UploadCity(QSharedPointer<City> city);
+    bool UploadRoute(QSharedPointer<Route> route);
+    bool UploadBus(QSharedPointer<Bus> bus);
 
 };

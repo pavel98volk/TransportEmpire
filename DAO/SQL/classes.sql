@@ -2,6 +2,9 @@
  * compiler for C++.
  */
 
+USE TransportEmpireDB;
+GO
+
 IF OBJECT_ID('DBScheduledRace', 'U') IS NOT NULL
   DROP TABLE [DBScheduledRace];
 GO

@@ -72,4 +72,6 @@ LIBS += -L"$$_PRO_FILE_PWD_/Libraries/ODB/libodb-mssql/lib64/"  -lodb-mssql
 LIBS += -L"$$_PRO_FILE_PWD_/Libraries/ODB/libodb-qt/lib64/"     -lodb-qt
 
 DISTFILES += \
-    DAO/classes-odb.ixx
+    DAO/classes-odb.ixx \
+    DAO/SQL/Schema.png \
+    DAO/SQL/classes.sql

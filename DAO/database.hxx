@@ -1,5 +1,4 @@
-#ifndef DATABASE_HXX
-#define DATABASE_HXX
+#pragma once
 
 #include <string>
 #include <memory>   
@@ -26,9 +25,8 @@ inline std::auto_ptr<odb::database> create_database(int& argc, char* argv[])
 
 		exit(0);
 	}
-    auto_ptr<database> db(new odb::mssql::database("", "", "TransportEmpireDB", odb::mssql::protocol_np, "ODB"));
+    auto_ptr<database> db(new odb::mssql::database("", "", "TransportEmpireDB"));
 
 	return db;
 }
 
-#endif // DATABASE_HXX

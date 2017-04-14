@@ -8,8 +8,35 @@
   </head>
   <body>
     <div id="map"></div>
-	<input class="button" type="button" value="Create road" onclick="sendRoad()">
+	<div id="controlPanel">
+		<div id="optionPanel"> 
+			<input type="checkbox" id="liveRoad" onclick="changeLiveRoad()">Display roads in live mode<br>
+			<input type="checkbox" id="destTown" onclick="setLastTownDestination()" checked>Make last added town destination<br>
+			<input type="checkbox" id="addNearestTown" onclick="setNearestTownAdded()" checked>Mark nearest town as added<br>
+		</div>
+		<div id="inputPanel">
+			<div id="inputItem">
+				<label>
+					Origin:<br>
+					<select id="origin">
+					</select>
+				</label>
+			</div>
+			<div id="inputItem">
+				<label>
+					Destination:<br>
+					<select id="destination">
+					</select>
+				</label>
+			</div>
+			<input type="button" id="buildButton" value="Build Road" onclick="buildRoad()"><br>
+			<input type="button" id="clearButton" value="Clear Map" onclick="clearMap()">
+		</div>
+		<div id="sendPanel">
+			<input type="button" id="sendButton" value="Send road" onclick="sendRoad()">
+		</div>
+	</div>
 	<script defer src="script1.js"></script>
-	<script defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAWNP65YGCI0ZtbrxAM-ulQJ7TMfRCRl2Q&libraries=places&callback=initMap"></script>
+	<script defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAWNP65YGCI0ZtbrxAM-ulQJ7TMfRCRl2Q&libraries=places,geometry&callback=initMap"></script>
   </body>
 </html>

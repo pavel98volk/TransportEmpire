@@ -1,15 +1,21 @@
 var map;
-var mouseover;
-var live_road = false;
-var last_town_destination = true;
-var nearest_town_added = true;
 var info_window;
-var marked_places = {};
-var markers = {};
 var places_service;
 var direction_service;
-var direction_display = [];
-var color_alphabet = '0123456789ABCDEF';
+var selected_road;
+
+var mouseover				 = false;
+var live_road				 = true;
+var last_town_destination	 = true;
+var nearest_town_added		 = true;
+
+var marked_places	 = {};
+var markers			 = {};
+
+var roads			 = [];
+var roads_display	 = [];
+var ordered_markers	 = [];
+var colors = ['#4682B4','#00FF00','#FF0000','#FFFF00','#FF1493','#8B008B','#000000','#FF4500','#8B4513','#FF00FF'];
 
 function initMap() {
 	var position = {lat: 50.4501, lng: 30.523400000000038}; //Kiyv
@@ -18,14 +24,14 @@ function initMap() {
 		zoom: 8
 	});
 	map.addListener('click', function(event){
-		searchNearestTownsWithFilters(event.latLng);
+		searchNearestTowns(event.latLng);
 	});
 	//var socket = new WebSocket("ws://10.1.3.121:1234");
 	places_service = new google.maps.places.PlacesService(map);
 	direction_service = new google.maps.DirectionsService;
 }
 
-function searchNearestTownsWithFilters(click_position){
+function searchNearestTowns(click_position){
 	//var filters = document.getElementById('filters');
 	if (nearest_town_added == true){
 		places_service.search({
@@ -52,9 +58,9 @@ function searchCallback(results, status){
 function radarCallback(results, status){
 	if (status === google.maps.places.PlacesServiceStatus.OK){
 		clearMarkers();
-		for (i in results){
-			createMarker(results[i]);
-		}
+		results.forEach(function(item){
+			createMarker(item);
+		});
 	}
 }
 
@@ -148,7 +154,7 @@ function addMarkerToRoad(place_id) {
 				destination.removeChild(document.getElementById(result.formatted_address));
 			}
 			if (Object.keys(marked_places).length > 1 && live_road){
-					buildRoad();
+					findRoad();
 			}
 		}
 	});
@@ -166,8 +172,7 @@ function infoCallback(result, status){
 	}
 }
  
-function buildRoad(){
-	clearRoute();
+function findRoad(){
 	var waypts = [];
 	var origin_address = document.getElementById('origin').value;
 	var destination_address = document.getElementById('destination').value;
@@ -182,47 +187,101 @@ function buildRoad(){
 			}
 		}
 	}
+	clearRoads();
 	direction_service.route({
 		origin: origin,
 		destination: destination,
 		waypoints: waypts,
 		provideRouteAlternatives: true,
 		travelMode: google.maps.TravelMode.DRIVING
-	}, displayRoute);
+	}, buildRoads);
 	direction_service.route({
 		origin: origin,
 		destination: destination,
 		waypoints: waypts,
+		provideRouteAlternatives: true,
 		optimizeWaypoints: true,
 		travelMode: google.maps.TravelMode.DRIVING
-	}, displayRoute);
+	}, buildRoads);
 }
 
-function clearRoute(){
-	for (var i = direction_display.length; i > 0 ; i--){
-		direction_display[i - 1].setMap(null);
-		direction_display.pop();
-	}
+function clearRoads(){
+	roads.length = 0;
+	roads_display.forEach(function(item){
+		item.setMap(null);
+	});
+	roads_display.length = 0;
 }
 
-function displayRoute(result, status){
-	var color_shift = direction_display.length;
+function swap(a, b){
+	var c = a;
+	a = b;
+	b = c;
+}
+  
+function buildRoads(result, status){
+	var roads_length = roads.length;
 	if (status === google.maps.DirectionsStatus.OK){
-		for (var i = 0; i < result.routes.length; i++){
-			var color_mix = i + 1 + color_shift * 5;
-			var color = '#' + color_alphabet[(color_mix * 1) % 16] + color_alphabet[(color_mix * 11) % 16] + color_alphabet[(color_mix * 2) % 16] + color_alphabet[(color_mix * 7) % 16] + color_alphabet[(color_mix * 3) % 16] + color_alphabet[(color_mix * 5) % 16];					
-			direction_display[direction_display.length] = new google.maps.Polyline({
+		var waypoints = [];
+		result.geocoded_waypoints.forEach(function(waypoint_item){
+			places_service.getDetails({placeId: waypoint_item.place_id}, function(waypoint, stat){
+				if (stat == google.maps.places.PlacesServiceStatus.OK){
+					waypoints.push({address: waypoint.formatted_address, position: waypoint.geometry.location});
+				}
+			});
+		});
+		result.routes.forEach(function(route_item, i){
+			var distance = 0;
+			var path = [];
+			route_item.legs.forEach(function(leg_item){
+				leg_item.steps.forEach(function(step_item){
+					step_item.path.forEach(function(path_item){
+						path.push(path_item);
+					});
+					distance += step_item.distance.value;
+				});
+			});
+			var road_display = new google.maps.Polyline({
 				map: map,
-				strokeWeight: 3,
-				strokeOpacity: 1.0,
-				strokeColor: color,
-				path: result.routes[i].overview_path
-			});		
-		}
+				strokeWeight: 5,
+				strokeOpacity: 0.3,
+				strokeColor: colors[roads.length],
+				path: path
+			});	
+			road_display.addListener('click', function(){
+				selectRoad(roads_length + i, road_display, waypoints)
+			});			
+			roads_display.push(road_display);
+			roads.push({distance: distance, waypoints: waypoints, path: google.maps.geometry.encoding.encodePath(path)});
+		});
 	}
 }
 
-function changeLiveRoad(){
+function selectRoad(index, road_display, waypoints){
+	roads_display.forEach(function(road_display_item){
+		road_display_item.setOptions({
+			strokeOpacity: 0.3
+		});
+	});
+	road_display.setOptions({
+		strokeOpacity: 1.0
+	});
+	selected_road = index;
+	ordered_markers.forEach(function(item){
+		item.setMap(null);
+	});
+	ordered_markers.length = 0;
+	waypoints.forEach(function(waypoint_item, i){
+		var marker = new google.maps.Marker({
+			map: map,
+			position: waypoint_item.position,
+			label: '' + (i + 1)
+		});
+		ordered_markers.push(marker);
+	});	
+}
+
+function setLiveRoad(){
 	if (live_road == false){
 		live_road = true;
 		document.getElementById('buildButton').disabled = true;
@@ -250,25 +309,25 @@ function setNearestTownAdded(){
 
 function clearSelectTag(elem){
 	var elem_childs = elem.getElementsByTagName('*');
-	var length = elem_childs.length;
-	for (var i = length; i > 0; i--){
+	var elem_childs_length = elem_childs.length;
+	for (var i = elem_childs_length; i > 0; i--){
 		elem_childs[i - 1].remove();
 	}
 }
 
 function clearMap(){
-	clearRoute();
+	clearRoads();
 	clearAllMarkers();
 	clearSelectTag(document.getElementById('origin'));
 	clearSelectTag(document.getElementById('destination'));
 }
 
 function sendRoad(){
-	var path = [];
-	for (place_id in marked_places){
-		path.push({address: marked_places[place_id].address, location: marked_places[place_id].location});
+	if (selected_road === undefined){
+		alert("Wrong road selected!!!");
+		return;
 	}
-	var str = JSON.stringify(path);
+	var str = JSON.stringify(roads[selected_road]);
 	alert(str);
 	//socket.send(str);
 }

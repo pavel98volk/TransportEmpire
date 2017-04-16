@@ -1,0 +1,41 @@
+html, body {
+	height: 		100%;
+	width: 			100%;
+	margin: 		0pt;
+	padding: 		0pt;
+}
+
+#map {
+    height: 		96%;
+	width: 			60%;
+	margin: 		5pt;
+	float: 			left;
+}
+
+#controlPanel {
+	width: 			35%;
+	margin: 		5pt;
+	float: 			left;
+	height: 		96%;
+	border-color: 	black;
+	border-width: 	1pt;
+	padding: 		5pt;
+}
+
+#inputPanel {
+	margin: 		3pt;
+	width: 			auto;
+	height: 		auto;
+	padding: 		3pt;
+}
+
+#inputItem {
+	margin: 		2pt;
+	padding: 		2pt;
+	width: 			auto;
+	height: 		auto;
+}
+
+select {
+	width: 			80%;
+}

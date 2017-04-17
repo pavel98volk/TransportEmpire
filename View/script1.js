@@ -9,7 +9,7 @@ var live_road				 = true;
 var last_town_destination	 = true;
 var nearest_town_added		 = true;
 
-var marked_places	 = {};
+var selected_places	 = {};
 var markers			 = {};
 
 var roads			 = [];
@@ -26,9 +26,9 @@ function initMap() {
 	map.addListener('click', function(event){
 		searchNearestTowns(event.latLng);
 	});
-	//var socket = new WebSocket("ws://10.1.3.121:1234");
 	places_service = new google.maps.places.PlacesService(map);
 	direction_service = new google.maps.DirectionsService;
+	info_window = new google.maps.InfoWindow;
 }
 
 function searchNearestTowns(click_position){
@@ -51,6 +51,7 @@ function searchNearestTowns(click_position){
 function searchCallback(results, status){
 	if (status === google.maps.places.PlacesServiceStatus.OK){
 		clearMarkers();
+		clearOrderedMarkers();
 		createMarker(results[0]);
 	}
 }
@@ -58,102 +59,91 @@ function searchCallback(results, status){
 function radarCallback(results, status){
 	if (status === google.maps.places.PlacesServiceStatus.OK){
 		clearMarkers();
-		results.forEach(function(item){
-			createMarker(item);
+		clearOrderedMarkers();
+		results.forEach(function(result_item){
+			createMarker(result_item);
 		});
 	}
 }
 
 function clearMarkers(){
 	for (place_id in markers){
-		if (marked_places[place_id] === undefined){
+		if (selected_places[place_id] === undefined){
 			markers[place_id].setMap(null);
 			delete markers[place_id];
 		}
 	}
 }
 
-function clearAllMarkers(){
-	for (place_id in markers){
-		markers[place_id].setMap(null);
-		delete markers[place_id];
-		if (marked_places[place_id] !== undefined){
-			delete marked_places[place_id];
-		}
-	}
-}
-
 function createMarker(place){
+	var marker_place = {location: place.geometry.location, placeId: place.place_id};
 	if (markers[place.place_id] !== undefined){
 		return;
 	}
-	markers[place.place_id] = new google.maps.Marker({
-		position: place.geometry.location,
+	var marker = new google.maps.Marker({
+		place: marker_place,
 		map: map,
 		zIndex: 1
 	});	
+	marker.addListener('click', function(){
+		addMarkerToRoad(marker);
+	});
+	marker.addListener('mouseover', function(){
+		showInfoWindow(marker);	
+		marker.setZIndex(2);
+	});
+	marker.addListener('mouseout', function(){
+		hideInfoWindow();	
+		marker.setZIndex(1);
+	});
 	if (nearest_town_added){
-		addMarkerToRoad(place.place_id);
+		addMarkerToRoad(marker);
 	}
-	markers[place.place_id].addListener('click', function(){
-		addMarkerToRoad(place.place_id);
-	});
-	markers[place.place_id].addListener('mouseover', function(){
-		showInfoWindow(place.place_id);	
-	});
-	markers[place.place_id].addListener('mouseout', function(){
-		hideInfoWindow(place.place_id);	
-	});
+	markers[place.place_id] = marker;
 }
 
-function showInfoWindow(place_id){
+function showInfoWindow(marker){
 	mouseover = true;
 	setTimeout(function(){
 			if (mouseover){
-				places_service.getDetails({placeId: place_id}, infoCallback);
+				places_service.getDetails({placeId: marker.getPlace().placeId}, infoCallback);
+				info_window.open(map, marker);
 			}
 		}, 600
 	);
-	markers[place_id].setZIndex(2);
 }
 
-function hideInfoWindow(place_id){
+function hideInfoWindow(){
 	mouseover = false;
-	if (markers[place_id] !== undefined){
-		markers[place_id].setZIndex(1);
-		if (info_window !==undefined){
-			info_window.close();
-			delete info_window;
-		}
-	}
+	info_window.close();
 }
 
-function addMarkerToRoad(place_id) {
-	places_service.getDetails({placeId: place_id}, function(result, status){
+function addMarkerToRoad(marker) {
+	places_service.getDetails({placeId: marker.getPlace().placeId}, function(result, status){
 		if (status === google.maps.places.PlacesServiceStatus.OK){
 			var origin = document.getElementById('origin');
 			var destination = document.getElementById('destination');
-			if (marked_places[place_id] === undefined){
+			if (selected_places[marker.getPlace().placeId] === undefined){
 				var option1 = document.createElement('option');
 				option1.innerHTML = result.formatted_address;
 				option1.value = result.formatted_address;
 				option1.id = result.formatted_address;
-				markers[place_id].setIcon('http://maps.google.com/mapfiles/kml/pal4/icon23.png');
 				var option2 = option1.cloneNode(true);
 				origin.appendChild(option1);
 				destination.appendChild(option2);
 				if (last_town_destination){
 					destination.value = option2.value;
 				}
-				marked_places[result.place_id] = {address: result.formatted_address, location: result.geometry.location};
+				marker.setIcon('http://maps.google.com/mapfiles/kml/pal4/icon23.png');
+				selected_places[marker.getPlace().placeId] = {address: result.formatted_address, location: result.geometry.location};
 			} else {
-				markers[place_id].setMap(null);
-				delete marked_places[place_id];
-				delete markers[place_id];
+				marker.setMap(null);
+				delete selected_places[marker.getPlace().placeId];
+				delete marker;
 				origin.removeChild(document.getElementById(result.formatted_address));
 				destination.removeChild(document.getElementById(result.formatted_address));
 			}
-			if (Object.keys(marked_places).length > 1 && live_road){
+			if (Object.keys(selected_places).length > 1 && live_road){
 					findRoad();
 			}
 		}
@@ -162,28 +152,23 @@ function addMarkerToRoad(place_id) {
 
 function infoCallback(result, status){
 	if (status === google.maps.places.PlacesServiceStatus.OK){
-		if (info_window !==undefined){
-			info_window.close();
-			delete info_window;
-		}
-		info_window = new google.maps.InfoWindow;
 		info_window.setContent(result.formatted_address);
-		info_window.open(map, markers[result.place_id]);
 	}
 }
  
 function findRoad(){
-	var waypts = [];
+	clearOrderedMarkers();
+	var waypoints = [];
 	var origin_address = document.getElementById('origin').value;
 	var destination_address = document.getElementById('destination').value;
-	for (place_id in marked_places){
-		if (marked_places[place_id].address == origin_address){
-			var origin = marked_places[place_id].location;
+	for (place_id in selected_places){
+		if (selected_places[place_id].address == origin_address){
+			var origin = selected_places[place_id].location;
 		} else {
-			if (marked_places[place_id].address == destination_address){
-				var destination = marked_places[place_id].location;
+			if (selected_places[place_id].address == destination_address){
+				var destination = selected_places[place_id].location;
 			} else {
-				waypts.push({location: marked_places[place_id].location});
+				waypoints.push({location: selected_places[place_id].location});
 			}
 		}
 	}
@@ -191,24 +176,24 @@ function findRoad(){
 	direction_service.route({
 		origin: origin,
 		destination: destination,
-		waypoints: waypts,
+		waypoints: waypoints,
+		travelMode: google.maps.TravelMode.DRIVING,
 		provideRouteAlternatives: true,
-		travelMode: google.maps.TravelMode.DRIVING
+		optimizeWaypoints: true
 	}, buildRoads);
 	direction_service.route({
 		origin: origin,
 		destination: destination,
-		waypoints: waypts,
-		provideRouteAlternatives: true,
-		optimizeWaypoints: true,
-		travelMode: google.maps.TravelMode.DRIVING
+		waypoints: waypoints,
+		travelMode: google.maps.TravelMode.DRIVING,
+		provideRouteAlternatives: true
 	}, buildRoads);
 }
 
 function clearRoads(){
 	roads.length = 0;
-	roads_display.forEach(function(item){
-		item.setMap(null);
+	roads_display.forEach(function(display_item){
+		display_item.setMap(null);
 	});
 	roads_display.length = 0;
 }
@@ -222,18 +207,16 @@ function swap(a, b){
 function buildRoads(result, status){
 	var roads_length = roads.length;
 	if (status === google.maps.DirectionsStatus.OK){
-		var waypoints = [];
-		result.geocoded_waypoints.forEach(function(waypoint_item){
-			places_service.getDetails({placeId: waypoint_item.place_id}, function(waypoint, stat){
-				if (stat == google.maps.places.PlacesServiceStatus.OK){
-					waypoints.push({address: waypoint.formatted_address, position: waypoint.geometry.location});
-				}
-			});
-		});
 		result.routes.forEach(function(route_item, i){
+			var waypoints = [];
 			var distance = 0;
 			var path = [];
 			route_item.legs.forEach(function(leg_item){
+				if (waypoints.length != 0){
+					waypoints.pop();
+				}
+				waypoints.push({address: leg_item.start_address, location: leg_item.start_location});
+				waypoints.push({address: leg_item.end_address, location: leg_item.end_location});
 				leg_item.steps.forEach(function(step_item){
 					step_item.path.forEach(function(path_item){
 						path.push(path_item);
@@ -257,6 +240,13 @@ function buildRoads(result, status){
 	}
 }
 
+function clearOrderedMarkers(){
+	ordered_markers.forEach(function(item){
+		item.setMap(null);
+	});
+	ordered_markers.length = 0;
+}
+
 function selectRoad(index, road_display, waypoints){
 	roads_display.forEach(function(road_display_item){
 		road_display_item.setOptions({
@@ -267,15 +257,13 @@ function selectRoad(index, road_display, waypoints){
 		strokeOpacity: 1.0
 	});
 	selected_road = index;
-	ordered_markers.forEach(function(item){
-		item.setMap(null);
-	});
-	ordered_markers.length = 0;
+	clearOrderedMarkers();
 	waypoints.forEach(function(waypoint_item, i){
 		var marker = new google.maps.Marker({
 			map: map,
-			position: waypoint_item.position,
-			label: '' + (i + 1)
+			position: waypoint_item.location,
+			label: '' + (i + 1),
+			zIndex: 2
 		});
 		ordered_markers.push(marker);
 	});	
@@ -315,9 +303,22 @@ function clearSelectTag(elem){
 	}
 }
 
+function clearAllMarkers(){
+	for (place_id in markers){
+		markers[place_id].setMap(null);
+		delete markers[place_id];
+		if (selected_places[place_id] !== undefined){
+			delete selected_places[place_id];
+		}
+	}
+}
+
 function clearMap(){
 	clearRoads();
 	clearAllMarkers();
+	clearOrderedMarkers();
+	delete selected_places;
+	selected_places = {};
 	clearSelectTag(document.getElementById('origin'));
 	clearSelectTag(document.getElementById('destination'));
 }
@@ -329,5 +330,6 @@ function sendRoad(){
 	}
 	var str = JSON.stringify(roads[selected_road]);
 	alert(str);
+	//var socket = new WebSocket("ws://10.1.3.121:1234");
 	//socket.send(str);
 }

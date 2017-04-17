@@ -18,18 +18,18 @@
 			<div id="inputItem">
 				<label>
 					Origin:<br>
-					<select id="origin">
+					<select id="origin" onchange="findRoad()">
 					</select>
 				</label>
 			</div>
 			<div id="inputItem">
 				<label>
 					Destination:<br>
-					<select id="destination">
+					<select id="destination" onchange="findRoad()">
 					</select>
 				</label>
 			</div>
-			<input type="button" id="buildButton" value="Build Road" onclick="buildRoad()" disabled><br>
+			<input type="button" id="buildButton" value="Build Road" onclick="findRoad()" disabled><br>
 			<input type="button" id="clearButton" value="Clear Map" onclick="clearMap()">
 		</div>
 		<div id="sendPanel">

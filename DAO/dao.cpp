@@ -119,7 +119,7 @@ QVector<QSharedPointer<City>> dao::DownloadAllCities()
             QPoint location;
             location.setX(i->getLocationX());
             location.setY(i->getLocationY());
-            QSharedPointer<City> current(new City(i->getName(),i->getPopulation(),location));
+            QSharedPointer<City> current(new City(i->getName(), i->getPopulation(), location));
             answer.push_back(current);
         }
 

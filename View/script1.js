@@ -90,11 +90,9 @@ function createMarker(place){
 	});
 	marker.addListener('mouseover', function(){
 		showInfoWindow(marker);	
-		marker.setZIndex(2);
 	});
 	marker.addListener('mouseout', function(){
-		hideInfoWindow();	
-		marker.setZIndex(1);
+		hideInfoWindow(marker);
 	});
 	if (nearest_town_added){
 		addMarkerToRoad(marker);
@@ -105,17 +103,22 @@ function createMarker(place){
 function showInfoWindow(marker){
 	mouseover = true;
 	setTimeout(function(){
-			if (mouseover){
-				places_service.getDetails({placeId: marker.getPlace().placeId}, infoCallback);
-				info_window.open(map, marker);
-			}
-		}, 600
-	);
+		if (mouseover){
+			places_service.getDetails({placeId: marker.getPlace().placeId}, function(result, status){
+				if (status === google.maps.places.PlacesServiceStatus.OK){
+					info_window.setContent(result.formatted_address);
+				}
+			});
+			info_window.open(map, marker);
+		}
+	}, 600);
+	marker.setZIndex(2);
 }
 
-function hideInfoWindow(){
+function hideInfoWindow(marker){
 	mouseover = false;
-	info_window.close();
+	info_window.close();	
+	marker.setZIndex(1);
 }
 
 function addMarkerToRoad(marker) {
@@ -144,20 +147,13 @@ function addMarkerToRoad(marker) {
 				destination.removeChild(document.getElementById(result.formatted_address));
 			}
 			if (Object.keys(selected_places).length > 1 && live_road){
-					findRoad();
+					findRoads();
 			}
 		}
 	});
 }
 
-function infoCallback(result, status){
-	if (status === google.maps.places.PlacesServiceStatus.OK){
-		info_window.setContent(result.formatted_address);
-	}
-}
- 
-function findRoad(){
-	clearOrderedMarkers();
+function setWaypoints(){
 	var waypoints = [];
 	var origin_address = document.getElementById('origin').value;
 	var destination_address = document.getElementById('destination').value;
@@ -172,6 +168,16 @@ function findRoad(){
 			}
 		}
 	}
+	return {origin: origin, destination: destination, waypoints: waypoints};
+}
+
+function findRoads(){
+	var params = setWaypoints();
+	findRoadsWithParams(params.origin, params.destination, params.waypoints);
+}
+
+function findRoadsWithParams(origin, destination, waypoints){
+	clearOrderedMarkers();
 	clearRoads();
 	direction_service.route({
 		origin: origin,
@@ -208,36 +214,41 @@ function buildRoads(result, status){
 	var roads_length = roads.length;
 	if (status === google.maps.DirectionsStatus.OK){
 		result.routes.forEach(function(route_item, i){
-			var waypoints = [];
-			var distance = 0;
-			var path = [];
+			var total_distance = 0;			
+			var path		 = []; // Array of latLng
+			var legs		 = []; // Each leg contains start (address and position), end (address and position) and distance
+			var road		 = {}; // Contains total_distance, legs, path (encoded string)
 			route_item.legs.forEach(function(leg_item){
-				if (waypoints.length != 0){
-					waypoints.pop();
-				}
-				waypoints.push({address: leg_item.start_address, location: leg_item.start_location});
-				waypoints.push({address: leg_item.end_address, location: leg_item.end_location});
+				var start = {address: leg_item.start_address, location: leg_item.start_location};
+				var end = {address: leg_item.end_address, location: leg_item.end_location};
+				legs.push({start: start, end: end, distance: leg_item.distance.value});
+				total_distance += leg_item.distance.value;
 				leg_item.steps.forEach(function(step_item){
 					step_item.path.forEach(function(path_item){
 						path.push(path_item);
 					});
-					distance += step_item.distance.value;
 				});
 			});
-			var road_display = new google.maps.Polyline({
-				map: map,
-				strokeWeight: 5,
-				strokeOpacity: 0.3,
-				strokeColor: colors[roads.length],
-				path: path
-			});	
-			road_display.addListener('click', function(){
-				selectRoad(roads_length + i, road_display, waypoints)
-			});			
-			roads_display.push(road_display);
-			roads.push({distance: distance, waypoints: waypoints, path: google.maps.geometry.encoding.encodePath(path)});
+			road = {total_distance: total_distance, legs: legs, path: google.maps.geometry.encoding.encodePath(path)};
+			roads.push(road);
+			displayRoad(road, roads_length + i);
 		});
 	}
+}
+
+function displayRoad(road, index){
+	var road_display = new google.maps.Polyline({
+		map: map,
+		strokeWeight: 5,
+		strokeOpacity: 0.3,
+		strokeColor: colors[roads.length],
+		path: google.maps.geometry.encoding.decodePath(road.path)
+	});	
+	road_display.addListener('click', function(){
+		selected_road = index;
+		selectRoad(road, road_display);
+	});			
+	roads_display.push(road_display);
 }
 
 function clearOrderedMarkers(){
@@ -247,7 +258,8 @@ function clearOrderedMarkers(){
 	ordered_markers.length = 0;
 }
 
-function selectRoad(index, road_display, waypoints){
+function selectRoad(road, road_display){
+	clearOrderedMarkers();
 	roads_display.forEach(function(road_display_item){
 		road_display_item.setOptions({
 			strokeOpacity: 0.3
@@ -256,17 +268,41 @@ function selectRoad(index, road_display, waypoints){
 	road_display.setOptions({
 		strokeOpacity: 1.0
 	});
-	selected_road = index;
-	clearOrderedMarkers();
-	waypoints.forEach(function(waypoint_item, i){
+	var textarea = document.getElementById('outputTextarea');
+	textarea.value = 'Total distance: ' + (road['total_distance'] / 1000) + 'km' + '\n';
+	road['legs'].forEach(function(leg_item, i, array){
+
 		var marker = new google.maps.Marker({
 			map: map,
-			position: waypoint_item.location,
+			position: leg_item['start']['location'],
 			label: '' + (i + 1),
 			zIndex: 2
 		});
 		ordered_markers.push(marker);
+		if (i == array.length - 1){
+			var marker = new google.maps.Marker({
+				map: map,
+				position: leg_item['end']['location'],
+				label: '' + (i + 2),
+				zIndex: 2
+			});
+			ordered_markers.push(marker);
+		}
+		setTextareaInfo(leg_item, textarea);
 	});	
+
+}
+
+function setTextareaInfo(leg, textarea){
+	var address = leg['start']['address'];
+	var koma = address.indexOf(',');
+	textarea.value += (address.substring(koma + 2, 
+		address.indexOf(',', koma + 2)) + ' - ');
+	address = leg['end']['address'];
+	koma = address.indexOf(',');
+	textarea.value += (address.substring(koma + 2, 
+		address.indexOf(',', koma + 2)) + '\n');
+	textarea.value += ('   Distance: ' + (leg['distance'] / 1000) + 'km' + '\n');
 }
 
 function setLiveRoad(){

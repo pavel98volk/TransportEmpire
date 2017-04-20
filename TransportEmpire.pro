@@ -24,7 +24,8 @@ SOURCES += \
     DAO/classes-odb.cxx \
     DAO/dao.cpp \
     main.cpp \
-    Test/dao_test.cpp
+    Test/dao_test.cpp \
+    Model/leg.cpp
 
 # The following define makes your compiler emit warnings if you use
 # any feature of Qt which as been marked deprecated (the exact warnings
@@ -54,7 +55,8 @@ HEADERS += \
     DAO/classes-odb.hxx \
     Test/test_suite.h \
     Test/dao_test.h \
-    DAO/database.hxx
+    DAO/database.hxx \
+    Model/leg.h
 
 # Select the database we are going to use.
 #

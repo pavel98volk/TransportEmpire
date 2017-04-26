@@ -16,8 +16,6 @@
 
 #include "Server/webserver.h"
 
-#include "DAO/dao.h"
-
 #include <iostream>
 
 using namespace std;
@@ -27,8 +25,10 @@ int main(int argc, char* argv[])
 {
     QCoreApplication a(argc, argv);
 
+#ifdef QT_DEBUG
     // Runs all unit tests instantiated as QTestSuite
     QTestSuite::RunAllTests(argc, argv);
+#endif
 
     QScopedPointer<WebServer> webServer{ new WebServer };
         QObject::connect(webServer.data(), &WebServer::closed,

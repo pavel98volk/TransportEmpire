@@ -1,0 +1,102 @@
+<div id ="whiteboard">
+  <!-- left window-->
+  <div class="main">
+    <div id="map"></div>
+	</div>
+
+
+  <!--  toolbar -->
+<div class="tools">
+	<div id="controlPanel">
+		<div class="panel">
+			<div id="optionPanel"> 
+				<div class="item">
+					<div class="optionItem">
+						<input type="checkbox" id="liveRoad" onclick="setLiveRoad()" checked>Display roads in live mode<br>
+					</div>
+				</div>
+				<div class="item">
+					<div class="optionItem">
+						<input type="checkbox" id="destTown" onclick="setLastTownDestination()" checked>Make last added town destination<br>
+					</div>
+				</div>
+				<div class="item">
+					<div class="optionItem">
+						<input type="checkbox" id="addNearestTown" onclick="setNearestTownAdded()" checked>Mark nearest town as added<br>
+					</div>
+				</div>
+				<div class="item">
+					<div class="optionItem">
+						<input type="button" value="Delete map" onclick="deleteMap()">
+					</div>
+				</div>
+				<div class="item">
+					<div class="optionItem">
+						<input type="button" value="Start map" onclick="initMap()">
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="panel">
+			<div id="inputPanel">
+				<div class="item">
+					<div class="inputItem">
+						<label>
+							Origin:<br>
+							<select id="origin" onchange="findRoads()">
+							</select>
+						</label>
+					</div>
+				</div>
+				<div class="item">
+					<div class="inputItem">
+						<label>
+							Destination:<br>
+							<select id="destination" onchange="findRoads()">
+							</select>
+						</label>
+					</div>
+				</div>
+				<div class="item">
+					<div class="inputItem">
+						<input type="button" id="buildButton" value="Build Road" onclick="findRoads()" disabled><br>
+					</div>
+				</div>
+				<div class="item">
+					<div class="inputItem">
+						<input type="button" id="clearButton" value="Clear Map" onclick="clearMap()">			
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="panel">
+			<div id="outputPanel">
+				<div class="item">
+					<div class="outputItem">
+						<label>
+							<textarea id="outputTextarea" rows="10" readonly></textarea>
+						</label>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="panel">
+			<div id="sendPanel">
+				<div class="item">
+					<div class="sendItem">
+						<input type="button" id="sendButton" value="show road object" onclick="sendRoad()">
+						<input type="button" value="Send to server" (click)="send()">
+						<input type="button" value="Request road" (click)="requestRoad()">
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+    <div id="border"></div>
+
+  </div>
+</div>
+
+   
+
+      

@@ -1,0 +1,39 @@
+
+
+<div class= "background">
+
+ <div id ="links">
+     <button class="link" (click)="showmap='map'">
+     <h1>M</h1>
+     <span class="name"> MAP</span>
+     </button>
+     <button class="link">
+        <h1>E</h1>
+     </button>
+     <button class="link">
+          <h1>N</h1>
+     </button>
+     <button class="link" >
+          <h1>U</h1>
+     </button>
+
+ </div>
+
+
+
+<div id="whitebox" >  
+<app-passenger *ngIf="showmap == 'map'" style="overflow:hidden;">
+</app-passenger>
+<div [ngSwitch]="showmap"> 
+<app-passenger *ngSwitchCase="'mapa'" style="overflow:hidden;">
+</app-passenger>
+<div *ngSwitchDefault> <h1> Press MAP in the menu to open MAP  </h1><h2>*here is going to be an entrance page</h2></div>
+</div>
+</div>
+
+
+
+<div>
+
+
+

@@ -18,23 +18,26 @@ declare function setRoute(route:any);
 })
 export class PassengerComponent implements OnInit {
 
-  send():void{
-  var a=getRoute();
-  if(a)
-  this.wsc.send("route",getRoute());
-  else if(!confirm("select road"))alert("then no server for ya");
+tab:number=1;
+
+
+
+ send():void{
+    var a=getRoute();
+    if(a)
+      this.wsc.send("POST","route",getRoute());
+    else if(!confirm("select road"))alert("then no server for ya");
  }
  requestRoad(){
-   this.wsc.send("give me road","");
+    this.wsc.send("GET","give me road","");
  }
   showList(){};
-    constructor(private wsc:WebsocketService) {
-     
+    constructor(private wsc:WebsocketService) {  
     }
 
   ngOnInit() {
     initMap(); 
-  this.wsc.addRecieveFunc(function(ev:MessageEvent){var obj =JSON.parse(ev.data);if(obj.info == "route") setRoute(obj.data);});
+  this.wsc.addRecieveFunc(function(ev:MessageEvent){var obj =JSON.parse(ev.data);if(obj.resource == "route") setRoute(obj.data);});
   
 
   }

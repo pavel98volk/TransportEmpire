@@ -1,11 +1,9 @@
-
-#include "Server/webserver.h"
-#include "Model/path.h"
+#include "webserver.hpp"
 
 WebServer::WebServer(QObject *parent):
 	QObject(parent)
 {
-	webServer = new QWebSocketServer("Hello world",
+	webServer = new QWebSocketServer("Transport Database",
 									 QWebSocketServer::NonSecureMode,
 									 this);
 
@@ -23,18 +21,18 @@ WebServer::~WebServer(){
 	}
 }
 
-void WebServer::open(quint16 port){
-	qDebug() << "open(" << port << ")";
-	webServer->listen(QHostAddress::Any, port);
+bool WebServer::open(quint16 port){
+	qDebug() << "WebServer::open(" << port << ")";
+	return webServer->listen(QHostAddress::Any, port);
 }
 
 void WebServer::close(){
-	qDebug() << "close()";
+	qDebug() << "WebServer::close()";
 	webServer->close();
 }
 
 void WebServer::onNewConnection(){
-	qDebug() << "client new connection";
+	qDebug() << "WebServer::onNewConnection()";
 	QWebSocket *ws = webServer->nextPendingConnection();
 
 	connect(ws, &QWebSocket::textMessageReceived  , this, &WebServer::onClientTextMessage);
@@ -44,39 +42,30 @@ void WebServer::onNewConnection(){
 	webClients << ws;
 }
 
-void WebServer::onErrors(){
-
-}
-
 void WebServer::onClose(){
 	emit closed();
 }
 
-void WebServer::onClientTextMessage(QString message){
-    QWebSocket *ws = qobject_cast<QWebSocket*>(sender());
-    if(!ws) return;
+void WebServer::onClientTextMessage(const QString &message){
+	QWebSocket *ws = qobject_cast<QWebSocket*>(sender());
+	if(!ws) return;
 
-    if(message == "close()") close();
+	QByteArray ba = QByteArray::fromStdString(message.toStdString());
+	QJsonDocument json(QJsonDocument::fromJson(ba));
 
-     qDebug() << message;
-     Path p;
-     QByteArray arr = QByteArray::fromStdString(message.toStdString());
-     QJsonDocument doc(QJsonDocument::fromJson(arr));
-     p.ReadPath(doc.array());
-     p.Debug();
-     for(QWebSocket *wsc: webClients)
-          wsc->sendTextMessage(message);
+	QJsonObject req = json.object();
+	QString request = req["request"].toString();
+	QJsonValue data = req["data"];
 }
 
 void WebServer::onClientDataMessage(QByteArray message){
 	QWebSocket *ws = qobject_cast<QWebSocket*>(sender());
 	if(!ws) return;
-
-	ws->sendBinaryMessage(message);
+	Q_UNUSED(message)
 }
 
 void WebServer::onClientDisconnected(){
-	qDebug() << "client disconnected";
+	qDebug() << "WebServer::onClientDisconnected()";
 	QWebSocket *ws = qobject_cast<QWebSocket*>(sender());
 	if(!ws) return;
 

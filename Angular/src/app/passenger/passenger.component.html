@@ -7,7 +7,17 @@
 
   <!--  toolbar -->
 <div class="tools">
-	<div id="controlPanel">
+ <div id = "tools_tabs">
+   <div *ngIf="tab == 1" id ="tab1" class = "tabon">MainControls</div>
+    <div *ngIf="tab != 1" id ="tab1" class = "taboff" (click)="tab=1">Main controls </div>
+	<div *ngIf="tab == 2" id ="tab2" class = "tabon">some others</div>
+    <div *ngIf="tab != 2" id ="tab2" class = "taboff" (click)="tab=2">some others</div>
+	<div *ngIf="tab == 3" id ="tab3" class = "tabon">and even more </div>
+    <div *ngIf="tab != 3" id ="tab3" class = "taboff" (click)="tab=3">and even more</div>
+ </div>
+
+ <div  id="tools_view" >
+	<div  id="controlPanel">
 		<div class="panel">
 			<div id="optionPanel"> 
 				<div class="item">
@@ -27,11 +37,7 @@
 				</div>
 				<div class="item">
 					<div class="optionItem">
-						<input type="button" value="Delete map" onclick="deleteMap()">
-					</div>
-				</div>
-				<div class="item">
-					<div class="optionItem">
+						<input type="button" value="Delete map" onclick="deleteMap()"> 
 						<input type="button" value="Start map" onclick="initMap()">
 					</div>
 				</div>
@@ -92,7 +98,10 @@
 			</div>
 		</div>
 	</div>
-    <div id="border"></div>
+</div>
+    <div id="borderleft">
+	</div>
+	
 
   </div>
 </div>

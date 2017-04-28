@@ -1,14 +1,14 @@
 #whiteboard{
     position:absolute;
      height:100%;
-    width:200%;
+    width:100%;
     top:0px;
-    left:-40%;
+    left:0px;
 }
 .main{
     position:absolute;
     height:100%;
-    width:50.75%;
+    width:70.75%;
     top:0px;
     left:0px;
     display:block;
@@ -24,10 +24,9 @@
 .tools{
     position:absolute;
     top:0px;
-     left: 50.25%;
+    left: 70.25%;
     height:100%;
-    width: 49.5%;
-    
+    width: 29.75%;
     box-sizing:border-box;
      padding:2%;
     background-color:white;
@@ -35,24 +34,85 @@
      background-position: calc(70%+10px) 0 0 0;
      background-size: stretch;
     background-attachment:fixed;
-     
+    box-shadow: 0 0 20px -5px black;
+    overflow:hidden;
     
 }
-#border{
+div[id^="border"]{
     z-index:10;
      position:absolute;
      height:100%;
-    width:1%;
+    width:2%;
     top:0px;
-    left:0px;
-    background-color:grey;
+    background-color:rgb(150,150,150);
      background-position:1000px 0;
-     box-shadow: inset 0 0 10px 0 white;
-
+     box-shadow: inset 0 0 5px 0 black;
      cursor:e-resize;
-    
+}
+#borderleft{
+ left:0px;
 }
 
+#tools_tabs{
+    z-index:3;
+    position:absolute;
+    top:0;
+    left:2%;
+    width:98%;
+    height:8%;
+    background-color: rosybrown;
+    box-shadow:0 0 10px 0 black;
+}
+div[id^="tab"]{
+    position:absolute;
+    top:20%;
+    width:30%;
+    height:52%;
+    box-shadow: inset 0 0 10px black;
+    border-radius: 10px;
+    text-align: center;
+  padding-top:2%;
+  font-size:19px;
+  font-weight:bold;
+    transition: background-color;
+    transition-duration:3s;
+}
+.taboff{
+   background-color:indianred;
+   cursor:pointer;
+;
+}
+.taboff:hover{
+ background-color:red;
+}
+.tabon{
+   background-color:lightgreen;
+   cursor:not-allowed;
+}
+.tabon:hover{
+    background-color:white;
+}
+#tab1{
+    
+    left:2%;
+}
+#tab2{
+    left:34%;
+}
+#tab3{
+    left:66%;
+}
+#tools_view{
+    box-shadow:inset 0 0 5px 0 black;
+    background-color: linen;
+    position:absolute;
+    top:8%;
+    left:2%;
+    height:92%;
+    width:98%;
+   
+
+}
 
 
 #map{
@@ -77,13 +137,15 @@
 
 
 #controlPanel {
-	margin: 		5pt;
-	padding: 		5pt;
-	width: 		30%;
-	height: 		auto;
+    top:5%;
+	padding:5pt;
+	width:85%;
+	height:auto;
 	position:absolute;
-    left:2%;
-	border: solid 3pt black;
+    left:5%;
+    background-color:lightgray;
+	border: solid 2pt black;
+    box-shadow: inset 0 0 15px 0 black;
 }
 
 div.panel {
@@ -91,15 +153,16 @@ div.panel {
 	padding: 		3pt;
 	width: 			auto;
 	height: 		auto;
-	border: solid 2pt black;
+    background-color:azure;
+	border: solid 2pt rgba(0,0,0,0.1);
 }
 
 div.item {
+    background-color:lightgoldenrodyellow;
 	margin: 		2pt;
 	padding: 		2pt;
 	width: 			auto;
 	height: 		auto;
-	border: solid 1pt black;
 }
 
 select {
@@ -110,28 +173,4 @@ select {
 textarea {
 	width: 			99%;
 	margin: 		auto;
-}
-
-#optionPanel {
-}
-
-.optionItem {
-}
-
-#inputPanel {
-}
-
-.inputItem {
-}
-
-#outputPanel {
-}
-
-.outputItem {
-}
-
-#sendPanel {
-}
-
-.sendItem {
 }

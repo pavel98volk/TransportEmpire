@@ -18,14 +18,18 @@ declare function setRoute(route:any);
 })
 export class PassengerComponent implements OnInit {
 
-  send():void{
-  var a=getRoute();
-  if(a)
-  this.wsc.send("route",getRoute());
-  else if(!confirm("select road"))alert("then no server for ya");
+tab:number=1;
+
+
+
+ send():void{
+    var a=getRoute();
+    if(a)
+      this.wsc.send("route",getRoute());
+    else if(!confirm("select road"))alert("then no server for ya");
  }
  requestRoad(){
-   this.wsc.send("give me road","");
+    this.wsc.send("give me road","");
  }
   showList(){};
     constructor(private wsc:WebsocketService) {

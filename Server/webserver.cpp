@@ -3,21 +3,19 @@
 WebServer::WebServer(QObject *parent):
 	QObject(parent)
 {
-	webServer = new QWebSocketServer("Transport Database",
-									 QWebSocketServer::NonSecureMode,
-									 this);
+	webServer = new QWebSocketServer("TransportEmpire",
+					QWebSocketServer::NonSecureMode, this);
 
 	connect(webServer, &QWebSocketServer::newConnection,
-			this, &WebServer::onNewConnection);
+			this, &WebServer::onClientConnected);
 	connect(webServer, &QWebSocketServer::closed,
 			this, &WebServer::onClose);
 }
 
 WebServer::~WebServer(){
 	while(!webClients.isEmpty()){
-		QWebSocket *ws = webClients.takeFirst();
-		ws->abort();
-		delete ws;
+		ServerClient *client = webClients.takeFirst();
+		delete client;
 	}
 }
 
@@ -31,44 +29,25 @@ void WebServer::close(){
 	webServer->close();
 }
 
-void WebServer::onNewConnection(){
-	qDebug() << "WebServer::onNewConnection()";
+void WebServer::onClientConnected(){
+	qDebug() << "WebServer::onClientConnected()";
 	QWebSocket *ws = webServer->nextPendingConnection();
 
-	connect(ws, &QWebSocket::textMessageReceived  , this, &WebServer::onClientTextMessage);
-	connect(ws, &QWebSocket::binaryMessageReceived, this, &WebServer::onClientDataMessage);
-	connect(ws, &QWebSocket::disconnected		  , this, &WebServer::onClientDisconnected);
-
-	webClients << ws;
-}
-
-void WebServer::onClose(){
-	emit closed();
-}
-
-void WebServer::onClientTextMessage(const QString &message){
-	QWebSocket *ws = qobject_cast<QWebSocket*>(sender());
-	if(!ws) return;
-
-	QByteArray ba = QByteArray::fromStdString(message.toStdString());
-	QJsonDocument json(QJsonDocument::fromJson(ba));
-
-	QJsonObject req = json.object();
-	QString request = req["request"].toString();
-	QJsonValue data = req["data"];
-}
-
-void WebServer::onClientDataMessage(QByteArray message){
-	QWebSocket *ws = qobject_cast<QWebSocket*>(sender());
-	if(!ws) return;
-	Q_UNUSED(message)
+	ServerClient *client = new ServerClient(ws);
+	connect(client, &ServerClient::disconnected, this, &WebServer::onClientDisconnected);
+	webClients << client;
 }
 
 void WebServer::onClientDisconnected(){
 	qDebug() << "WebServer::onClientDisconnected()";
-	QWebSocket *ws = qobject_cast<QWebSocket*>(sender());
-	if(!ws) return;
+	ServerClient *client = qobject_cast<ServerClient*>(sender());
+	if(!client) return;
 
-	webClients.removeAll(ws);
-	ws->deleteLater();
+	webClients.removeAll(client);
+	client->deleteLater();
+}
+
+void WebServer::onClose(){
+	qDebug() << "WebServer::onClose()";
+	emit closed();
 }

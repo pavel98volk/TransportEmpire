@@ -15,11 +15,14 @@ ServerClient::~ServerClient(){
 }
 
 void ServerClient::processRequest(const QString &request, const QJsonValue &data){
+	sendResponse(request, data);
+
 	if (request == ""){
-		sendResponse(request, data);
+		//
 	} else if (request == "") {
 		//
 	} else {
+	//	sendResponse("ERROR", QJsonValue());
 		qDebug() << "ServerClient::processRequest(): unknown request";
 	}
 }

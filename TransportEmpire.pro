@@ -24,7 +24,9 @@ SOURCES += \
     Model/Route.cpp \
     Model/RouteStatistics.cpp \
     Model/ScheduledRace.cpp \
-    Server/WebServer.cpp
+    Server/WebServer.cpp \
+    Server/Request.cpp \
+    Server/Reply.cpp
 
 # The following define makes your compiler emit warnings if you use
 # any feature of Qt which as been marked deprecated (the exact warnings
@@ -52,5 +54,7 @@ HEADERS += \
     Test/TestSuite.h \
     Server/WebServer.h \
     Server/ConnectionManager.h \
-    Server/ClientConnection.h
+    Server/ClientConnection.h \
+    Server/Request.h \
+    Server/Reply.h
 

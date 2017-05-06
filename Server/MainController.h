@@ -3,6 +3,8 @@
 
 #include <QObject>
 
+#include "Reply.h"
+#include "Request.h"
 #include "ClientConnection.h"
 
 class MainController : public QObject {
@@ -14,7 +16,7 @@ signals:
 
 public slots:
     void onConnectionEstablished(ClientConnection*);
-    void onRequestReceived(const QString&);
+    void onRequestReceived(const Request&);
 };
 
 #endif // MAINCONTROLLER_H

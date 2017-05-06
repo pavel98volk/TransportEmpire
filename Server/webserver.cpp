@@ -1,53 +1,28 @@
-#include "webserver.hpp"
+#include "WebServer.h"
 
-WebServer::WebServer(QObject *parent):
-	QObject(parent)
+WebServer::WebServer(QObject* parent)
+    : QObject(parent),
+      mainController   { new MainController(this) },
+      connectionManager{ new ConnectionManager(this) }
 {
-	webServer = new QWebSocketServer("TransportEmpire",
-					QWebSocketServer::NonSecureMode, this);
-
-	connect(webServer, &QWebSocketServer::newConnection,
-			this, &WebServer::onClientConnected);
-	connect(webServer, &QWebSocketServer::closed,
-			this, &WebServer::onClose);
+    connect(connectionManager, &ConnectionManager::newConnectionEstablished,
+            mainController, &MainController::onConnectionEstablished);
 }
 
-WebServer::~WebServer(){
-	while(!webClients.isEmpty()){
-		ServerClient *client = webClients.takeFirst();
-		delete client;
-	}
+void WebServer::setAddress(const QHostAddress& _address) {
+    address = _address;
 }
 
-bool WebServer::open(quint16 port){
-	qDebug() << "WebServer::open(" << port << ")";
-	return webServer->listen(QHostAddress::Any, port);
+void WebServer::setPort(quint16 _port) {
+    port = _port;
 }
 
-void WebServer::close(){
-	qDebug() << "WebServer::close()";
-	webServer->close();
+void WebServer::launch() {
+    isRunning = connectionManager->open(address, port);
 }
 
-void WebServer::onClientConnected(){
-	qDebug() << "WebServer::onClientConnected()";
-	QWebSocket *ws = webServer->nextPendingConnection();
-
-	ServerClient *client = new ServerClient(ws);
-	connect(client, &ServerClient::disconnected, this, &WebServer::onClientDisconnected);
-	webClients << client;
+void WebServer::stop() {
+    connectionManager->close();
+    emit stoped();
 }
 
-void WebServer::onClientDisconnected(){
-	qDebug() << "WebServer::onClientDisconnected()";
-	ServerClient *client = qobject_cast<ServerClient*>(sender());
-	if(!client) return;
-
-	webClients.removeAll(client);
-	client->deleteLater();
-}
-
-void WebServer::onClose(){
-	qDebug() << "WebServer::onClose()";
-	emit closed();
-}

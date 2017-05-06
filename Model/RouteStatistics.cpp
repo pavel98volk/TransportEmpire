@@ -1,4 +1,4 @@
-#include "Model/route_statistics.h"
+#include "Model/RouteStatistics.h"
 
 RouteStatistics::RouteStatistics(float quality_factor_, quint32 square_coverage_, quint32 population_coverage_)
 {

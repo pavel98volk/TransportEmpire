@@ -1,4 +1,4 @@
-#include "Model/bus_type_info.h"
+#include "Model/BusTypeInfo.h"
 
 BusTypeInfo::BusTypeInfo(QString brand_, QString model_, quint32 fuel_, quint32 comfort_)
 {

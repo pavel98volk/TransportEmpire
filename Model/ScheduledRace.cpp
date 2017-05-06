@@ -1,4 +1,4 @@
-#include "Model/scheduled_race.h"
+#include "Model/ScheduledRace.h"
 
 ScheduledRace::ScheduledRace()
 {

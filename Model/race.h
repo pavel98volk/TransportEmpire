@@ -1,9 +1,9 @@
 #pragma once
 
-#include "Model/route.h"
-#include "Model/money.h"
-#include "Model/bus_type_info.h"
-#include "Model/race_statistics.h"
+#include "Model/Route.h"
+#include "Model/Money.h"
+#include "Model/BusTypeInfo.h"
+#include "Model/RaceStatistics.h"
 
 #include <QTime>
 #include <QSharedPointer>

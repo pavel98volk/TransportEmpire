@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Model/bus_type_info.h"
+#include "Model/BusTypeInfo.h"
 
 #include <QDate>
 #include <QtGlobal>

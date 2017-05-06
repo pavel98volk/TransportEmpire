@@ -1,10 +1,10 @@
-#include "Model/bus.h"
+#include "Model/Bus.h"
 
 Bus::Bus(QSharedPointer<BusTypeInfo> info_, QSharedPointer<BusState> state_, QDate purchase_date_)
 {
-    info=info_;
-    state=state_;
-    purchase_date=purchase_date_;
+    info = info_;
+    state = state_;
+    purchase_date = purchase_date_;
 }
 
 QSharedPointer<BusTypeInfo> Bus::getInfo()
@@ -24,10 +24,10 @@ QDate Bus::getPurchaseDate()
 
 BusState::BusState(quint32 durability_, QDate last_technical_inspection_date_, QDate next_technical_inspection_date_, bool is_avalible_)
 {
-    durability=durability_;
-    last_technical_inspection_date=last_technical_inspection_date_;
-    next_technical_inspection_date=next_technical_inspection_date_;
-    is_avalible=is_avalible_;
+    durability = durability_;
+    last_technical_inspection_date = last_technical_inspection_date_;
+    next_technical_inspection_date = next_technical_inspection_date_;
+    is_avalible = is_avalible_;
 }
 
 quint32 BusState::getDurability()

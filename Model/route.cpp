@@ -1,10 +1,10 @@
-#include "Model/route.h"
+#include "Model/Route.h"
 
 Route::Route(QSharedPointer<Path> path_, QSharedPointer<RouteStatistics> statistics_, double milage_)
 {
-    path=path_;
-    statistics=statistics_;
-    milage=milage_;
+    path = path_;
+    statistics = statistics_;
+    milage = milage_;
 }
 
 QSharedPointer<Path> Route::getPath()

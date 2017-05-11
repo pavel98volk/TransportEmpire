@@ -11,10 +11,7 @@ CONFIG -= app_bundle
 TEMPLATE = app
 
 SOURCES += \
-    main.cpp \  
-    Server/ClientConnection.cpp \
-    Server/ConnectionManager.cpp \
-    Server/MainController.cpp \
+    main.cpp \
     Model/Bus.cpp \
     Model/BusTypeInfo.cpp \
     Model/City.cpp \
@@ -24,9 +21,9 @@ SOURCES += \
     Model/Route.cpp \
     Model/RouteStatistics.cpp \
     Model/ScheduledRace.cpp \
-    Server/WebServer.cpp \
-    Server/Request.cpp \
-    Server/Reply.cpp
+    Server/serverclient.cpp \
+    Server/webserver.cpp \
+    Server/modelbridge.cpp
 
 # The following define makes your compiler emit warnings if you use
 # any feature of Qt which as been marked deprecated (the exact warnings
@@ -40,7 +37,6 @@ DEFINES += QT_DEPRECATED_WARNINGS
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 HEADERS += \
-    Server/MainController.h \
     Model/Bus.h \
     Model/BusTypeInfo.h \
     Model/City.h \
@@ -52,9 +48,7 @@ HEADERS += \
     Model/RouteStatistics.h \
     Model/ScheduledRace.h \
     Test/TestSuite.h \
-    Server/WebServer.h \
-    Server/ConnectionManager.h \
-    Server/ClientConnection.h \
-    Server/Request.h \
-    Server/Reply.h
+    Server/serverclient.hpp \
+    Server/webserver.hpp \
+    Server/modelbridge.hpp
 

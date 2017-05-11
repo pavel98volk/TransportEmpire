@@ -1,28 +1,55 @@
-#include "WebServer.h"
+#include "webserver.hpp"
 
-WebServer::WebServer(QObject* parent)
-    : QObject(parent),
-      mainController   { new MainController(this) },
-      connectionManager{ new ConnectionManager(this) }
+WebServer::WebServer(QObject *parent):
+	QObject(parent)
 {
-    connect(connectionManager, &ConnectionManager::newConnectionEstablished,
-            mainController, &MainController::onConnectionEstablished);
+	webServer = new QWebSocketServer("TransportEmpire",
+					QWebSocketServer::NonSecureMode, this);
+
+	connect(webServer, &QWebSocketServer::newConnection,
+			this, &WebServer::onClientConnected);
+	connect(webServer, &QWebSocketServer::closed,
+			this, &WebServer::onClose);
+
+	modelBridge = new ModelBridge;
 }
 
-void WebServer::setAddress(const QHostAddress& _address) {
-    address = _address;
+WebServer::~WebServer(){
+	while(!webClients.isEmpty()){
+		ServerClient *client = webClients.takeFirst();
+		delete client;
+	}
 }
 
-void WebServer::setPort(quint16 _port) {
-    port = _port;
+bool WebServer::open(quint16 port){
+	qDebug() << "WebServer::open(" << port << ")";
+	return webServer->listen(QHostAddress::Any, port);
 }
 
-void WebServer::launch() {
-    isRunning = connectionManager->open(address, port);
+void WebServer::close(){
+	qDebug() << "WebServer::close()";
+	webServer->close();
 }
 
-void WebServer::stop() {
-    connectionManager->close();
-    emit stoped();
+void WebServer::onClientConnected(){
+	qDebug() << "WebServer::onClientConnected()";
+	QWebSocket *ws = webServer->nextPendingConnection();
+
+	ServerClient *client = new ServerClient(ws, modelBridge);
+	connect(client, &ServerClient::disconnected, this, &WebServer::onClientDisconnected);
+	webClients << client;
 }
 
+void WebServer::onClientDisconnected(){
+	qDebug() << "WebServer::onClientDisconnected()";
+	ServerClient *client = qobject_cast<ServerClient*>(sender());
+	if(!client) return;
+
+	webClients.removeAll(client);
+	client->deleteLater();
+}
+
+void WebServer::onClose(){
+	qDebug() << "WebServer::onClose()";
+	emit closed();
+}

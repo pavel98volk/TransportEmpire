@@ -3,20 +3,19 @@
 
 #include "Test/TestSuite.h"
 
-#include "Server/WebServer.h"
+#include "Server/webserver.hpp"
 
 int main(int argc, char* argv[])
 {
-    QCoreApplication app(argc, argv);
+	QCoreApplication app(argc, argv);
 
 #ifdef QT_DEBUG
-    // Runs all unit tests instantiated as QTestSuite
-    QTestSuite::RunAllTests(argc, argv);
+	// Runs all unit tests instantiated as QTestSuite
+	QTestSuite::RunAllTests(argc, argv);
 #endif
 
-    WebServer server;
-    server.setPort(8080);
-    server.launch();
+	WebServer server;
+	server.open(8080);
 
-    return app.exec();
+	return app.exec();
 }

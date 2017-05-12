@@ -1,4 +1,4 @@
-#include "Model/race_statistics.h"
+#include "Model/RaceStatistics.h"
 
 RaceStatistics::RaceStatistics()
 {

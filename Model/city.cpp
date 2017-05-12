@@ -1,4 +1,4 @@
-#include "Model/city.h"
+#include "Model/City.h"
 
 City::City(const QJsonObject& json)
 {

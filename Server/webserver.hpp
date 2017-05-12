@@ -1,42 +1,40 @@
-#ifndef WEBSERVER_H
-#define WEBSERVER_H
+#ifndef WEBSERVER_HPP
+#define WEBSERVER_HPP
 
 #include <QObject>
 #include <QtWebSockets/QWebSocketServer>
 #include <QtWebSockets/QWebSocket>
 
-#include <QJsonDocument>
-#include <QJsonObject>
-
 #include <iostream>
 using namespace std;
 
-class WebServer: public QObject{
+#include "serverclient.hpp"
+#include "modelbridge.hpp"
+
+class WebServer: public QObject {
 	Q_OBJECT
 public:
 	explicit WebServer(QObject *parent = 0);
 	~WebServer();
 
-private:	/// <Data/>
+private:		/// <Data/>
 	QWebSocketServer*		webServer;
-	QList <QWebSocket*>		webClients;
+	QList <ServerClient*>	webClients;
+	ModelBridge*			modelBridge;
 
-public:		/// <Controls/>
+public:			/// <Controls/>
 	bool	open					(quint16 port);
 	void	close					();
 
-private:	/// <Engine/>
+private:		/// <Engine/>
 
 private slots:
-	void	onNewConnection			();
-	void	onClose					();
-
-	void	onClientTextMessage		(const QString &message);
-	void	onClientDataMessage		(QByteArray message);
+	void	onClientConnected		();
 	void	onClientDisconnected	();
+	void	onClose					();
 
 signals:
 	void	closed();
 };
 
-#endif /* WEBSERVER_H */
+#endif /* WEBSERVER_HPP */

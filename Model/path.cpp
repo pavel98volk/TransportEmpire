@@ -1,11 +1,11 @@
-#include "Model/path.h"
+#include "Model/Path.h"
 
 
 Path::Path(QVector<QSharedPointer<City> > cities_, qint32 quality_level_, double milage_)
 {
-    cities=cities_;
-    quality_level=quality_level_;
-    milage=milage_;
+    cities = cities_;
+    quality_level = quality_level_;
+    milage = milage_;
 }
 
 QVector<QSharedPointer<City> > Path::getCities()

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Model/city.h"
+#include "Model/City.h"
 
 #include <QVector>
 #include <QSharedPointer>

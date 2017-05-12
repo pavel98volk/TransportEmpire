@@ -4,9 +4,9 @@
 #include <QString>
 #include <QtGlobal>
 #include <QJsonValue>
-#include<QJsonArray>
-#include<QJsonDocument>
-#include<QJsonObject>
+#include <QJsonArray>
+#include <QJsonDocument>
+#include <QJsonObject>
 
 #include <QDebug>
 

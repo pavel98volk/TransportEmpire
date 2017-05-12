@@ -1,7 +1,7 @@
 #pragma once
 
-#include "Model/bus.h"
-#include "Model/race.h"
+#include "Model/Bus.h"
+#include "Model/Race.h"
 
 #include <QTime>
 #include <QSharedPointer>
